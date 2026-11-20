@@ -23,6 +23,8 @@ require_once __DIR__ . '/lib/weather_core.php';
 require_once __DIR__ . '/lib/kb.php';
 require_once __DIR__ . '/lib/safety.php';
 require_once __DIR__ . '/lib/outbreak_store.php';
+require_once __DIR__ . '/lib/store.php';
+require_once __DIR__ . '/lib/webhook.php';
 send_common_headers('POST, OPTIONS');
 require_method('POST');
 rate_limit('disease-min', (int)cfg('RATE_LIMIT_PER_MIN'), 60);
@@ -99,6 +101,7 @@ $refs = array_map(fn($r) => ['id' => $r['doc']['id'], 'title_bn' => $r['doc']['t
 $report_id = null;
 if (!empty($body['share_anonymous']) && $lat !== null && $is_claim && $final >= 0.5) {
     $report_id = outbreak_add($lat, $lon, (string)($d['crop'] ?? ''), (string)$d['disease_detection']['disease'], $category);
+    try { webhook_outbreak_check($lat, $lon); } catch (Throwable $e) { /* best-effort */ }
 }
 
 $d['app_name'] = 'চাষা ভাই'; $d['app_name_en'] = "Farmer's Companion";
@@ -122,4 +125,13 @@ $d['meta'] = ['model' => 'চাষা ভাই AI', 'latency_ms' => (int)((mic
     'tokens' => ['in' => $v['usage']['prompt_tokens'] ?? null, 'image' => $v['usage']['prompt_tokens_details']['image_tokens'] ?? null, 'cached' => $v['usage']['prompt_tokens_details']['cached_tokens'] ?? null, 'out' => $v['usage']['completion_tokens'] ?? null],
     'disclaimer_bn' => 'এটি এআই-ভিত্তিক প্রাথমিক পরামর্শ, চূড়ান্ত রোগ নির্ণয় নয়। গুরুতর ক্ষেত্রে কৃষি কর্মকর্তার পরামর্শ নিন।'];
 unset($d['kb_query']);
+
+// ---------- Anonymous diagnosis log + farmer feedback hook (no photo, no IP, grid cell only)
+$diag_id = null;
+try {
+    $diag_id = store_add_diagnosis(['crop' => (string)($d['crop'] ?? ''), 'disease' => (string)($d['disease_detection']['disease'] ?? ''), 'category' => $category,
+        'photo_conf' => $conf, 'final_conf' => $final, 'agreement' => $agree, 'escalated' => $escalate,
+        'weather_used' => $lat !== null, 'satellite_used' => (bool)$field, 'lat' => $lat, 'lon' => $lon, 'latency_ms' => $d['meta']['latency_ms']]);
+} catch (Throwable $e) { $diag_id = null; }
+$d['feedback'] = ['diagnosis_id' => $diag_id, 'endpoint' => 'api/feedback.php', 'verdicts' => STORE_VERDICTS];
 json_out($d);

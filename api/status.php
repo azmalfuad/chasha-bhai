@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/lib/kb.php';
 require_once __DIR__ . '/lib/outbreak_store.php';
+require_once __DIR__ . '/lib/store.php';
 send_common_headers('GET, OPTIONS');
 require_method('GET');
 rate_limit('status', 30, 60);
@@ -47,4 +48,12 @@ json_out([
     'knowledge_base' => ['docs' => count(kb_docs())],
     'community' => ['reports_21d' => $ob['total_reports'], 'published_cells' => count($ob['cells']), 'suppressed_cells' => $ob['suppressed_cells']],
     'ai_usage_today' => $usage,
+    'data_layer' => (function () {
+        try { $st = store_stats(30); } catch (Throwable $e) { $st = ['diagnoses' => null, 'with_feedback' => null]; }
+        return ['storage' => store_driver() === 'sqlite' ? 'SQLite (PDO)' : 'JSON-lines fallback', 'diagnoses_30d' => $st['diagnoses'], 'feedback_30d' => $st['with_feedback'],
+            'answer_cache_entries' => count(glob(cb_data_dir('cache/answers') . '/*.json') ?: []), 'webhook' => webhook_configured_label(),
+            'retention_days' => (int)(cfg('STORE_RETENTION_DAYS') ?: 180), 'streaming' => 'SSE: /api/copilot_stream.php'];
+    })(),
 ]);
+
+function webhook_configured_label(): string { return filter_var((string)cfg('WEBHOOK_URL'), FILTER_VALIDATE_URL) ? 'configured' : 'off'; }

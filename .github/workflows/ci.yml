@@ -1,0 +1,24 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP lint (every file)
+        run: |
+          php -v
+          find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+      - name: Offline tests (guardrails, retrieval, store, webhook signing, k-anonymity; no AI key)
+        run: php eval/test_offline.php
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python compile check
+        run: python -m py_compile mcp/server.py services/satellite/main.py eval/run_eval.py scripts/export_dataset.py
+      - name: Secret scan (fail if a provider key is committed)
+        run: |
+          if grep -RInE 'xai-[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}' --exclude-dir=.git .; then echo 'secret found'; exit 1; fi
+          test ! -f api/config.local.php

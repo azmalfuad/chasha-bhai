@@ -21,4 +21,11 @@ return [
     'SAT_SERVICE_URL'       => '',       // e.g. 'https://chasha-sat.onrender.com'
     'RATE_LIMIT_PER_MIN'    => 20,
     'AI_RATE_LIMIT_PER_DAY' => 60,
+    // --- data layer (all optional)
+    'STORE_DRIVER'          => 'auto',   // 'auto' = SQLite via PDO if available, else JSON-lines; 'json' forces files
+    'STORE_RETENTION_DAYS'  => 180,      // anonymous diagnosis + feedback rows are deleted after this many days
+    'ANSWER_CACHE_TTL'      => 10800,    // advice-chat answer cache in seconds (0 = off)
+    'WEBHOOK_URL'           => '',       // optional: POST outbreak.cell_alert events here (HMAC signed)
+    'WEBHOOK_SECRET'        => '',       // shared secret for the X-Chasha-Signature header
+    'EXPORT_TOKEN'          => '',       // enables /api/data_export.php?dataset=labelled (empty = disabled)
 ];

@@ -1,5 +1,5 @@
 /* Chasha Bhai service worker: app shell cache-first, API network-first with cached fallback (offline-first). */
-const VER = 'chasha-v2-6';
+const VER = 'chasha-v2-7';
 const SHELL = ['./', './index.html', './assets/chasha-v2.css', './assets/chasha-core.js', './assets/chasha-v2.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(VER).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VER).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

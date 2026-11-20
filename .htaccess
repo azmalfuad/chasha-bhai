@@ -3,11 +3,11 @@ Options -Indexes
 DirectoryIndex index.html
 
 # Block internal folders and files from the web
-RedirectMatch 403 ^.*/(data|services|eval|mcp)(/.*)?$
+RedirectMatch 403 ^.*/(data|services|eval|mcp|scripts)(/.*)?$
 # Old debug script must never be reachable
 RedirectMatch 404 ^.*/test\.php$
 RedirectMatch 403 ^.*/(router\.php|README\.md|SUBMISSION\.md|\.git.*|\.env.*)$
-<FilesMatch "\.(md|py|jsonl|log|sh|lock|env|ini|bak)$">
+<FilesMatch "\.(md|py|jsonl|log|sh|lock|env|ini|bak|sqlite|sqlite-wal|sqlite-shm|db)$">
   Require all denied
 </FilesMatch>
 

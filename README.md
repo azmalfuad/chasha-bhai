@@ -5,15 +5,16 @@
 | Part | What it is | Status |
 |---|---|---|
 | `index.html` + `assets/` | Main web app (original look, extended) | ✅ working |
-| `api/*.php` | PHP 8 API: disease, weather, geocode, ndvi proxy, copilot, outbreak, status | ✅ working |
+| `api/*.php` | PHP 8 API: disease, weather, geocode, ndvi proxy, copilot (JSON + SSE streaming), outbreak, feedback, data export, status | ✅ working |
+| `api/lib/store.php` | SQLite (PDO) store for anonymous diagnoses + farmer feedback, JSON-lines fallback | ✅ tested offline |
 | `services/satellite/` | FastAPI Sentinel-2 NDVI/NDWI service (Docker) | ✅ working (needs separate host) |
-| `mcp/server.py` | MCP server with 5 tools | ✅ tested with an MCP client over stdio |
+| `mcp/server.py` | MCP server with 8 tools, stdio + Streamable HTTP | ✅ tested with the MCP Python SDK client over stdio and Streamable HTTP |
 | `docs/index.html` | Pitch deck, whitepaper and live status dashboard | ✅ |
 | `eval/` | Reproducible evaluation harness and honest results | ✅ (small n) |
 | `SUBMISSION.md` | Ready-to-paste hackathon form answers | ✅ |
 
 ## 1. Requirements
-- **Web host:** PHP **8.0+** with `curl`, `json`, `mbstring`, `gd` (or `fileinfo`). Apache with `.htaccess` (cPanel shared hosting is fine). HTTPS is required, because the camera, GPS, mic and service worker need a secure context.
+- **Web host:** PHP **8.0+** with `curl`, `json`, `mbstring`, `gd` (or `fileinfo`); `pdo_sqlite` is recommended for the feedback store (a JSON-lines fallback is used without it). Apache with `.htaccess` (cPanel shared hosting is fine). HTTPS is required, because the camera, GPS, mic and service worker need a secure context.
 - **Satellite service:** any Docker host. Render's free plan and Railway both work. Python 3.11+ with rasterio if you run it without Docker.
 - **xAI API key:** from https://console.x.ai.
 
@@ -41,6 +42,11 @@
 | `AI_GLOBAL_PER_DAY` | `0` (off) | cap on AI calls per day across ALL visitors — set e.g. `300` on a public demo |
 | `TRUST_LOCAL_PROXY` | `false` | `true` only when a tunnel (e.g. cloudflared) runs on the same host, so per-visitor limits use `CF-Connecting-IP` |
 | `MAX_IMAGE_BYTES` | `8388608` | upload cap |
+| `STORE_DRIVER` | `auto` | `auto` = SQLite via PDO when `pdo_sqlite` exists, else JSON-lines files; `json` forces files |
+| `STORE_RETENTION_DAYS` | `180` | anonymous diagnosis/feedback rows are deleted after this |
+| `ANSWER_CACHE_TTL` | `10800` | advice-chat answer cache in seconds (`0` = off); weather-dependent answers expire after 30 min |
+| `WEBHOOK_URL` / `WEBHOOK_SECRET` | empty | optional outbound webhook for `outbreak.cell_alert`, HMAC-SHA256 signed |
+| `EXPORT_TOKEN` | empty | enables the row-level labelled-dataset export; empty = disabled |
 
 ## 3. Deploy the satellite service
 **Render:** push the repo to GitHub, then choose *New → Blueprint* and point it at `services/satellite/render.yaml`. Alternatively, create a *Docker Web Service* with root dir `services/satellite`. Set `ALLOWED_ORIGINS=https://your-domain`. Copy the service URL into `SAT_SERVICE_URL` on the PHP host.
@@ -72,19 +78,31 @@ Claude Desktop / Cursor config example:
 ```json
 { "mcpServers": { "chasha-bhai": { "command": "python", "args": ["/path/mcp/server.py"], "env": { "CHASHA_API_BASE": "https://your-domain/api" } } } }
 ```
-The tools are `diagnose_crop`, `get_agri_weather`, `get_field_ndvi`, `search_krishi_kb` and `get_outbreak_alerts`. The MCP server never holds the xAI key; it calls the public API.
+Streamable HTTP transport (for remote MCP hosts): `python mcp/server.py --transport streamable-http --host 127.0.0.1 --port 8765` serves MCP at `http://127.0.0.1:8765/mcp`. The legacy HTTP+SSE transport is also available with `--transport sse` (endpoint `/sse`).
+
+The tools are `diagnose_crop`, `get_agri_weather`, `get_field_ndvi`, `search_krishi_kb`, `get_outbreak_alerts`, `submit_diagnosis_feedback`, `get_feedback_stats` and `export_outbreak_geojson`. The MCP server never holds the xAI key; it calls the public API.
 
 ## 6. Evaluation
 ```bash
+php eval/test_offline.php                                # 27 offline checks, no AI key or network needed
 python eval/run_eval.py --api http://127.0.0.1:8080/api   # writes eval/results/results.json + use EVAL.md
 ```
+`.github/workflows/ci.yml` runs `php -l` on every PHP file, the offline tests, a Python compile check and a secret scan on each push.
 See `eval/EVAL.md`. The sample is small, so treat the results as a smoke test, not an accuracy claim.
+
+## 6b. Data layer (feedback loop, storage, streaming, exports)
+- **Diagnosis log + farmer feedback.** `api/disease.php` writes one anonymous row per diagnosis (crop, label, category, confidences, agreement, escalation, which eyes were used, 0.1° grid cell). No photo, IP, name, phone or exact GPS. The result card shows “ঠিক / ভুল / জানি না” (`assets/data-enhance.js`), which POSTs to `api/feedback.php`; a “ভুল” answer can carry the correct label. `GET api/feedback.php?stats=1` returns counts only. These are farmer-reported verdicts, not a verified accuracy figure.
+- **Storage.** `api/lib/store.php` uses SQLite through PHP PDO (`data/runtime/chasha.sqlite`, tables `diagnoses`, `feedback`, `webhook_log`). If `pdo_sqlite` is missing it falls back to JSON-lines files under `data/runtime/store/`. Rows older than `STORE_RETENTION_DAYS` are deleted by the retention sweep.
+- **Streaming chat.** `api/copilot_stream.php` runs the same agent loop as `api/copilot.php` (shared code in `api/lib/copilot_core.php`), calls the model with `stream=true`, and sends Server-Sent Events: `status`, `tool`, `partial` (banned names masked, invalid `[n]` dropped) and `final` (the same validated JSON as `copilot.php`). The PWA reads it with `fetch()` streaming and falls back to `copilot.php` if streaming is unavailable.
+- **Answer cache.** First-turn chat questions are cached by a normalised question (case, spacing, punctuation, Bangla digits), model tier, ~11 km cell and app context, for `ANSWER_CACHE_TTL` (30 min if the weather tool was used). A cache hit costs zero model tokens. This is exact-match after normalisation, not embedding-based semantic caching.
+- **Exports.** `api/data_export.php?dataset=outbreak&format=geojson|csv|json` (published k-anonymous cells only, GeoJSON polygons), `dataset=feedback_stats&format=csv|json`, and `dataset=labelled&format=csv|ndjson|json&token=…` (disabled unless `EXPORT_TOKEN` is set). `python scripts/export_dataset.py --formats csv,parquet` builds the same labelled dataset as CSV and Apache Parquet (needs `pyarrow`).
+- **Webhooks.** With `WEBHOOK_URL` set, an `outbreak.cell_alert` event is POSTed once per cell/level/day when a published cell becomes ACTIVE or RISING. The body is signed: `X-Chasha-Signature: sha256=HMAC(WEBHOOK_SECRET, body)`.
 
 ## 7. Security checklist
 - **The key that was in the original `api/disease.php` / `api/weather.php` was exposed. ROTATE IT in the xAI console before deploying.**
 - `test.php` was removed, and `api/.htaccess` returns 404 for it if an old copy is still on the server. **Delete it from your live server.**
 - SSL verification is on and debug is off. CORS uses an allow-list. Rate limits apply per IP. Images are validated (MIME, base64, decodable, ≥ 64 px).
-- `.htaccess` denies `api/lib/`, `api/bootstrap.php`, configs, `data/`, `services/`, `eval/`, `mcp/` and `*.md`/`*.py`.
+- `.htaccess` denies `api/lib/`, `api/bootstrap.php`, configs, `data/`, `services/`, `eval/`, `mcp/`, `scripts/`, `*.md`/`*.py` and SQLite files.
 - The outbreak map stores no photo, IP or exact GPS: only `{disease, crop, date, 0.1° cell}`. A cell is shown only when it has ≥ 3 reports.
 
 ## 8. Data & licences

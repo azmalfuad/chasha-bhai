@@ -35,6 +35,13 @@ function cb_load_config(): array {
         'TRUST_LOCAL_PROXY'  => false,     // true only when a tunnel runs on the same host
         'MAX_IMAGE_BYTES'    => 8 * 1024 * 1024,
         'DATA_DIR'           => dirname(__DIR__) . '/data/runtime',
+        // --- data layer add-ons (all optional; no paid service, no new provider key)
+        'STORE_DRIVER'       => 'auto',    // auto = SQLite (PDO) if available, else JSON-lines; or 'json'
+        'STORE_RETENTION_DAYS' => 180,     // anonymous diagnosis/feedback rows are deleted after this
+        'ANSWER_CACHE_TTL'   => 10800,     // advice-chat answer cache (seconds); 0 = off
+        'WEBHOOK_URL'        => '',        // optional outbound webhook (e.g. an extension office endpoint)
+        'WEBHOOK_SECRET'     => '',        // HMAC-SHA256 signing secret for X-Chasha-Signature
+        'EXPORT_TOKEN'       => '',        // required for the row-level labelled-dataset export; empty = disabled
     ];
     $file = [];
     foreach ([dirname(__DIR__, 2) . '/chasha_config.php', __DIR__ . '/config.local.php'] as $p) {
@@ -255,5 +262,7 @@ function cb_retention_sweep(): void {
         foreach (glob(cb_data_dir($ns) . '/' . $pat) ?: [] as $f) if (is_file($f) && $now - filemtime($f) > $age) @unlink($f);
     }
     foreach (glob(cb_data_dir('cache') . '/*/*') ?: [] as $f) if (is_file($f) && $now - filemtime($f) > 8 * 86400) @unlink($f);
+    // anonymous diagnosis / feedback rows (SQLite or JSON-lines fallback)
+    if (is_file(__DIR__ . '/lib/store.php')) { require_once __DIR__ . '/lib/store.php'; store_sweep(); }
 }
 if (random_int(1, 100) === 1) { try { cb_retention_sweep(); } catch (Throwable $e) {} }

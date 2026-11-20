@@ -6,9 +6,14 @@ Any MCP client (Claude Desktop, Cursor, Grok-compatible agents, …) can call:
   get_field_ndvi     – Sentinel-2 NDVI/NDWI time series for a point/field in Bangladesh
   search_krishi_kb   – BM25 search over the curated, cited Krishi knowledge base
   get_outbreak_alerts– k-anonymous community disease hotspots
+  submit_diagnosis_feedback – farmer verdict (correct / wrong / unsure) on a diagnosis_id
+  get_feedback_stats – aggregate farmer-feedback counts (self-reported, not an accuracy claim)
+  export_outbreak_geojson – published outbreak cells as a GeoJSON FeatureCollection
 
 It is a thin client over the public PHP API, so it never holds the xAI key.
-Run:  CHASHA_API_BASE=https://your-site/api python mcp/server.py      (stdio transport)
+Run:  CHASHA_API_BASE=https://your-site/api python mcp/server.py      (stdio transport, default)
+      python mcp/server.py --transport streamable-http --port 8765     (Streamable HTTP at /mcp)
+      python mcp/server.py --transport sse --port 8765                 (legacy HTTP+SSE at /sse)
 """
 from __future__ import annotations
 
@@ -110,5 +115,46 @@ def get_outbreak_alerts(lat: Optional[float] = None, lon: Optional[float] = None
     return _get("outbreak.php", lat=lat, lon=lon, days=days)
 
 
+@mcp.tool()
+def submit_diagnosis_feedback(diagnosis_id: str, verdict: str, correct_label: Optional[str] = None) -> dict:
+    """Record whether a diagnosis was right. diagnosis_id comes from diagnose_crop (feedback.diagnosis_id);
+    verdict is 'correct', 'wrong' or 'unsure'; correct_label is optional (what it really was)."""
+    return _post("feedback.php", {"diagnosis_id": diagnosis_id, "verdict": verdict, "correct_label": correct_label or ""})
+
+
+@mcp.tool()
+def get_feedback_stats(days: int = 90) -> dict:
+    """Aggregate farmer feedback on diagnoses (counts per crop, self-reported agreement rate).
+    This is farmer-reported, not a verified accuracy figure."""
+    return _get("feedback.php", stats=1, days=days)
+
+
+@mcp.tool()
+def export_outbreak_geojson(days: int = 21) -> dict:
+    """Published (k-anonymous, >=3 reports) outbreak grid cells as a GeoJSON FeatureCollection of 0.1 degree polygons."""
+    r = httpx.get(f"{API}/data_export.php", params={"dataset": "outbreak", "format": "geojson", "days": days}, timeout=TIMEOUT)
+    try:
+        return r.json()
+    except ValueError:
+        return {"error": f"HTTP {r.status_code}"}
+
+
+def _main() -> None:
+    import argparse
+    ap = argparse.ArgumentParser(description="Chasha Bhai MCP server")
+    ap.add_argument("--transport", choices=["stdio", "streamable-http", "sse"], default=os.getenv("CHASHA_MCP_TRANSPORT", "stdio"))
+    ap.add_argument("--host", default=os.getenv("CHASHA_MCP_HOST", "127.0.0.1"))
+    ap.add_argument("--port", type=int, default=int(os.getenv("CHASHA_MCP_PORT", "8765")))
+    a = ap.parse_args()
+    if a.transport == "stdio":
+        mcp.run()
+        return
+    try:  # SDK 2.x: host/port are run() arguments
+        mcp.run(a.transport, host=a.host, port=a.port)
+    except TypeError:  # SDK 1.x: host/port live in settings
+        mcp.settings.host, mcp.settings.port = a.host, a.port
+        mcp.run(a.transport)
+
+
 if __name__ == "__main__":
-    mcp.run()
+    _main()
