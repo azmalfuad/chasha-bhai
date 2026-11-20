@@ -1,0 +1,8 @@
+api/config.local.php
+chasha_config.php
+.env
+data/runtime/
+eval/results/*.raw.json
+__pycache__/
+*.pyc
+.venv/

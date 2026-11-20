@@ -1,0 +1,13 @@
+# Render Blueprint — deploy the Sentinel-2 field-health microservice (free plan works; cold start ~30 s)
+services:
+  - type: web
+    name: chasha-satellite
+    runtime: docker
+    rootDir: services/satellite
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://YOUR-DOMAIN.example   # the PHP site that proxies /api/ndvi.php
+      - key: APPLY_STAC_OFFSET
+        value: "false"

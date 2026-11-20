@@ -1,0 +1,426 @@
+{
+ "version": "2026-11-19",
+ "curation_note": "Hand-written bilingual summaries by Team Syntax Error! of the public sources cited in each entry. Summaries, not verbatim copies. Always prefer the local agriculture office (Upazila Krishi Office / DAE) and Krishi Call Centre 16123 for final decisions.",
+ "docs": [
+  {
+   "id": "rice-blast",
+   "title_en": "Rice blast (leaf and collar)",
+   "title_bn": "ধানের ব্লাস্ট রোগ",
+   "crop": "rice",
+   "type": "fungal",
+   "keywords": [
+    "blast",
+    "ব্লাস্ট",
+    "magnaporthe",
+    "pyricularia",
+    "চোখ আকৃতির দাগ",
+    "spindle",
+    "diamond",
+    "neck blast",
+    "গিঁট",
+    "শীষ"
+   ],
+   "text_en": "Caused by the fungus Magnaporthe oryzae; can attack leaf, collar, node, neck and panicle at all growth stages. Lesions start white to grey-green with dark green borders and become spindle/diamond-shaped with grey centres and brown borders; lesions can merge and kill whole leaves. Favoured by frequent prolonged showers, cool daytime temperature, dew and low soil moisture. Often confused with brown spot (brown spot lesions are rounder, brown, with a yellow halo). Management: plant resistant varieties (ask the local agriculture office for the current list); split nitrogen into two or more doses because excess N increases blast; keep fields flooded where possible; silicon on silicon-deficient soils; do not use infected straw. Systemic fungicides (triazoles, strobilurins) can be used judiciously; a spray at heading can be effective — only products registered in Bangladesh, at label dose, on an officer's advice.",
+   "text_bn": "ম্যাগনাপোর্থে ওরাইজি ছত্রাকে হয়; পাতা, গিঁট, শীষের গোড়া (নেক) সহ সব অবস্থায় আক্রমণ করতে পারে। প্রথমে ধূসর-সবুজ দাগ, পরে চোখ/মাকু আকৃতির ধূসর মাঝখান ও বাদামি কিনারাযুক্ত দাগ; দাগ মিশে পুরো পাতা মরে যেতে পারে। ঘন ঘন বৃষ্টি, শিশির, দিনে ঠান্ডা আবহাওয়া ও মাটিতে কম রসে বাড়ে। বাদামি দাগ রোগের সাথে গুলিয়ে যায় (বাদামি দাগ গোল, চারপাশে হলুদ আভা)। দমন: প্রতিরোধী জাত (স্থানীয় কৃষি অফিস থেকে তালিকা নিন), ইউরিয়া একবারে বেশি না দিয়ে কয়েক কিস্তিতে দিন, সম্ভব হলে জমিতে পানি রাখুন, আক্রান্ত খড় ব্যবহার করবেন না। প্রয়োজনে কৃষি কর্মকর্তার পরামর্শে বাংলাদেশে নিবন্ধিত ছত্রাকনাশক লেবেলের মাত্রায় — শীষ বের হওয়ার সময় একবার স্প্রে কার্যকর হতে পারে।",
+   "source": {
+    "title": "IRRI Rice Knowledge Bank — Blast (leaf and collar)",
+    "url": "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/diseases/item/blast-leaf-collar"
+   }
+  },
+  {
+   "id": "rice-bacterial-blight",
+   "title_en": "Rice bacterial blight (BLB) / kresek",
+   "title_bn": "ধানের পাতা পোড়া (ব্যাকটেরিয়াল লিফ ব্লাইট)",
+   "crop": "rice",
+   "type": "bacterial",
+   "keywords": [
+    "bacterial blight",
+    "blb",
+    "পাতা পোড়া",
+    "xanthomonas",
+    "kresek",
+    "ক্রিসেক",
+    "হলুদ",
+    "ooze",
+    "wilting"
+   ],
+   "text_en": "Caused by Xanthomonas oryzae pv. oryzae. Seedlings wilt (kresek); on older plants water-soaked to yellow-orange stripes with wavy margins start at leaf tips/edges and move down; milky bacterial ooze in early morning that dries to yellow beads. Quick test: cut a young lesion, put it in a clear glass of water and look for turbid ooze from the cut end. Favoured by 25–34 °C, RH above 70 %, strong wind and continuous heavy rain, and high nitrogen. Yield loss can reach 70 % in susceptible varieties. Management: resistant varieties are the most reliable and cheapest control; balanced nutrients, especially avoid excess nitrogen; good drainage of fields and nurseries; remove weed hosts, stubble, ratoons and volunteer seedlings; let fallow fields dry.",
+   "text_bn": "জ্যান্থোমোনাস ব্যাকটেরিয়ায় হয়। চারা ঢলে পড়ে (ক্রিসেক); বড় গাছে পাতার আগা/কিনারা থেকে ঢেউ খেলানো হলুদ-কমলা দাগ নিচের দিকে নামে; ভোরে দুধের মতো ফোঁটা (উজ) দেখা যায়। সহজ পরীক্ষা: কচি দাগ কেটে স্বচ্ছ গ্লাসের পানিতে রাখুন — কাটা মুখ থেকে ঘোলা তরল বের হলে এই রোগ। ২৫–৩৪°C, ৭০%-এর বেশি আর্দ্রতা, ঝড়ো হাওয়া ও টানা বৃষ্টি এবং বেশি ইউরিয়ায় বাড়ে। দমন: প্রতিরোধী জাত সবচেয়ে কার্যকর ও সস্তা; ইউরিয়া পরিমিত, সুষম সার; জমি ও বীজতলায় পানি নিষ্কাশন; আগাছা, নাড়া ও মুড়ি ধান সরিয়ে ফেলুন; পতিত জমি শুকাতে দিন।",
+   "source": {
+    "title": "IRRI Rice Knowledge Bank — Bacterial blight",
+    "url": "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/diseases/item/bacterial-blight"
+   }
+  },
+  {
+   "id": "rice-sheath-blight",
+   "title_en": "Rice sheath blight",
+   "title_bn": "ধানের খোল পোড়া রোগ",
+   "crop": "rice",
+   "type": "fungal",
+   "keywords": [
+    "sheath blight",
+    "খোল পোড়া",
+    "rhizoctonia",
+    "sclerotia",
+    "sheath",
+    "খোল"
+   ],
+   "text_en": "Fungus Rhizoctonia solani. Oval greenish-grey lesions 1–3 cm on the leaf sheath just above the water line, spreading upward and to neighbouring hills; older lesions grey-white with brown margins; sclerotia may be visible. Favoured by 28–32 °C, canopy humidity 85–100 %, high nitrogen, dense planting and the rainy season. No resistant variety is currently available. Management: moderate nitrogen, wider spacing / lower seed rate to open the canopy, weed control especially on levees, drain fields relatively early in the season, seed treatment.",
+   "text_bn": "রাইজোকটোনিয়া সোলানি ছত্রাকে হয়। পানির ঠিক উপরে খোলে ১–৩ সেমি ডিম্বাকার ধূসর-সবুজ দাগ, পরে উপরে ও পাশের গোছায় ছড়ায়; পুরনো দাগের মাঝখান সাদাটে, কিনারা বাদামি। ২৮–৩২°C, গাছের ভেতরে ৮৫–১০০% আর্দ্রতা, বেশি ইউরিয়া ও ঘন রোপণে বাড়ে; বর্ষায় বেশি। দমন: পরিমিত ইউরিয়া, সঠিক দূরত্বে রোপণ, আইলের আগাছা পরিষ্কার, মৌসুমের শুরুতে জমির পানি কিছুদিন শুকানো, বীজ শোধন।",
+   "source": {
+    "title": "IRRI Rice Knowledge Bank — Sheath blight",
+    "url": "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/diseases/item/sheath-blight"
+   }
+  },
+  {
+   "id": "rice-brown-spot",
+   "title_en": "Rice brown spot",
+   "title_bn": "ধানের বাদামি দাগ রোগ",
+   "crop": "rice",
+   "type": "fungal",
+   "keywords": [
+    "brown spot",
+    "বাদামি দাগ",
+    "bipolaris",
+    "helminthosporium",
+    "hot water",
+    "গরম পানি",
+    "বীজ শোধন",
+    "1943"
+   ],
+   "text_en": "Fungal disease of leaves, sheath, panicle and grain. Lesions circular to oval, light-brown to grey centre with reddish-brown margin. Favoured by RH 86–100 %, 16–36 °C and 8–24 h leaf wetness; common in unflooded, nutrient-deficient soils. Survives in seed for years. Average loss about 5 % in South/Southeast Asian lowlands, up to 45 % in severe fields; historically linked to the 1943 Bengal famine. Management: improve soil fertility (balanced fertiliser; silicon slag on low-Si soils), resistant varieties, fungicide seed treatment, or hot-water seed treatment at 53–54 °C for 10–12 minutes after 8 h pre-soak in cold water.",
+   "text_bn": "পাতা, খোল, শীষ ও দানায় ছত্রাকজনিত রোগ। গোল বা ডিম্বাকার দাগ, মাঝখান হালকা বাদামি/ধূসর, কিনারা লালচে বাদামি। ৮৬–১০০% আর্দ্রতা, ১৬–৩৬°C এবং পাতা ৮–২৪ ঘণ্টা ভেজা থাকলে বাড়ে; পুষ্টিহীন ও শুকনো জমিতে বেশি। বীজে কয়েক বছর বেঁচে থাকে। ১৯৪৩-এর দুর্ভিক্ষের একটি কারণ হিসেবে পরিচিত। দমন: সুষম সার দিয়ে মাটির উর্বরতা বাড়ান, প্রতিরোধী জাত, বীজ শোধন — অথবা ৮ ঘণ্টা ঠান্ডা পানিতে ভিজিয়ে ৫৩–৫৪°C গরম পানিতে ১০–১২ মিনিট বীজ শোধন।",
+   "source": {
+    "title": "IRRI Rice Knowledge Bank — Brown spot",
+    "url": "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/diseases/item/brown-spot"
+   }
+  },
+  {
+   "id": "rice-planthopper",
+   "title_en": "Brown planthopper (BPH) and white-backed planthopper",
+   "title_bn": "বাদামি গাছফড়িং (কারেন্ট পোকা)",
+   "crop": "rice",
+   "type": "pest",
+   "keywords": [
+    "planthopper",
+    "bph",
+    "গাছফড়িং",
+    "কারেন্ট পোকা",
+    "hopperburn",
+    "হপারবার্ন",
+    "light trap",
+    "আলোক ফাঁদ",
+    "nilaparvata"
+   ],
+   "text_en": "Nymphs and adults feed at the base of tillers; high populations cause hopperburn (orange-yellow then brown, dry patches) with up to 100 % loss, and BPH transmits ragged stunt and grassy stunt viruses. Favoured by continuous flooding, shade, humidity, dense planting, excess nitrogen and early-season insecticide sprays that kill natural enemies. Scout: bend the plant and tap the base over water, check 10–20 hills diagonally; at 1 BPH per stem or less there is still time. Light traps at night (not near seedbeds) as warning. Flood the seedbed for a day to drown BPH. If natural enemies (spiders, mirid bugs, water striders) outnumber BPH, do not spray. Insecticide only if >1 hopper per stem AND more hoppers than natural enemies AND flooding is not possible.",
+   "text_bn": "বাচ্চা ও পূর্ণবয়স্ক পোকা গাছের গোড়ায় রস খায়; সংখ্যা বেশি হলে গোল হয়ে গাছ পুড়ে যাওয়ার মতো শুকিয়ে যায় (হপারবার্ন), ১০০% পর্যন্ত ক্ষতি হতে পারে; ভাইরাস রোগও ছড়ায়। ঘন রোপণ, বেশি ইউরিয়া, সবসময় জমিতে পানি ও শুরুতে অপ্রয়োজনীয় কীটনাশকে (উপকারী পোকা মরে যায়) বাড়ে। গাছ হেলিয়ে গোড়ায় টোকা দিয়ে পানিতে পোকা গুনুন; কোনাকুনি হেঁটে ১০–২০টি গোছা দেখুন। প্রতি কুশিতে ১টি বা কম হলে এখনই স্প্রে লাগবে না। রাতে আলোক ফাঁদ দিন। উপকারী পোকা (মাকড়সা, মিরিড বাগ) বেশি থাকলে স্প্রে করবেন না। কীটনাশক কেবল তখনই — প্রতি কুশিতে ১টির বেশি, উপকারী পোকার চেয়ে বেশি এবং পানি দিয়ে ডোবানো সম্ভব নয়।",
+   "source": {
+    "title": "IRRI Rice Knowledge Bank — Planthopper",
+    "url": "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/insects/item/planthopper"
+   }
+  },
+  {
+   "id": "rice-stem-borer",
+   "title_en": "Rice stem borer (dead heart, white head)",
+   "title_bn": "ধানের মাজরা পোকা",
+   "crop": "rice",
+   "type": "pest",
+   "keywords": [
+    "stem borer",
+    "মাজরা",
+    "dead heart",
+    "মরা ডিগ",
+    "white head",
+    "সাদা শীষ",
+    "egg mass",
+    "ডিমের গাদা"
+   ],
+   "text_en": "Larvae bore into stems: dead hearts (dry central tiller, pulls out easily) in the vegetative stage and white, empty panicles (white heads) at the reproductive stage; small holes and frass in stems. Favoured by high nitrogen, late planting and stubble left in the field. Management: hand-pick and destroy egg masses in seedbed and at transplanting; clip leaf tips of seedlings before transplanting; raise irrigation water periodically to submerge eggs; synchronous planting; harvest at ground level and remove stubble; split nitrogen; conserve natural enemies (wasps, spiders, lady beetles, dragonflies).",
+   "text_bn": "কীড়া কাণ্ডের ভেতরে ঢুকে খায়: কুশি অবস্থায় মাঝের পাতা শুকিয়ে যায় (মরা ডিগ, সহজে টেনে ওঠে), শীষ অবস্থায় সাদা চিটা শীষ (সাদা শীষ)। বেশি ইউরিয়া, দেরিতে রোপণ ও জমিতে নাড়া রেখে দিলে বাড়ে। দমন: বীজতলা ও রোপণের সময় ডিমের গাদা হাতে তুলে নষ্ট করুন; রোপণের আগে চারার আগা কেটে দিন; মাঝে মাঝে পানি বাড়িয়ে ডিম ডুবিয়ে দিন; একসাথে রোপণ; মাটির সমান করে ধান কেটে নাড়া সরান; ইউরিয়া কিস্তিতে দিন; উপকারী পোকা (বোলতা, মাকড়সা, লেডি বিটল, ফড়িং) রক্ষা করুন।",
+   "source": {
+    "title": "IRRI Rice Knowledge Bank — Stem borer",
+    "url": "http://www.knowledgebank.irri.org/training/fact-sheets/pest-management/insects/item/stem-borer"
+   }
+  },
+  {
+   "id": "rice-zinc-deficiency",
+   "title_en": "Zinc deficiency in rice",
+   "title_bn": "ধানে দস্তা (জিংক) ঘাটতি",
+   "crop": "rice",
+   "type": "nutrient",
+   "keywords": [
+    "zinc",
+    "দস্তা",
+    "জিংক",
+    "খয়রা",
+    "khaira",
+    "dusty brown",
+    "nutrient deficiency",
+    "পুষ্টির অভাব",
+    "stunted"
+   ],
+   "text_en": "Most widespread micronutrient disorder in rice. Appears 2–4 weeks after transplanting: dusty brown spots on upper leaves of stunted plants, uneven growth, chlorotic midribs near the base of young leaves, reduced tillering, delayed maturity. Common in intensively cropped, poorly drained, calcareous, sodic/saline and high-pH soils. Can be confused with iron deficiency/toxicity and tungro/grassy stunt viruses — confirm with a soil/plant test. Management: zinc-efficient varieties, organic manure before transplanting, drain permanently flooded fields periodically, ZnSO4 in the nursery, or dip seedlings / presoak seed in a 2–4 % ZnO suspension.",
+   "text_bn": "ধানের সবচেয়ে সাধারণ অণুপুষ্টির অভাব। রোপণের ২–৪ সপ্তাহ পর বেঁটে গাছের উপরের পাতায় ধুলোর মতো বাদামি দাগ, অসমান বৃদ্ধি, কচি পাতার মধ্যশিরা ফ্যাকাশে, কুশি কম। নিবিড় চাষ, জলাবদ্ধ, চুনযুক্ত, লবণাক্ত ও উচ্চ pH মাটিতে বেশি। ভাইরাস রোগের সাথে গুলিয়ে যায় — মাটি পরীক্ষায় নিশ্চিত হন। প্রতিকার: জৈব সার, মাঝে মাঝে জমি শুকানো, বীজতলায় জিংক সালফেট, অথবা ২–৪% জিংক অক্সাইড দ্রবণে চারা ডুবিয়ে রোপণ।",
+   "source": {
+    "title": "IRRI Rice Knowledge Bank — Zinc deficiency",
+    "url": "http://www.knowledgebank.irri.org/training/fact-sheets/nutrient-management/deficiencies-and-toxicities-fact-sheet/item/zinc-deficiency"
+   }
+  },
+  {
+   "id": "late-blight",
+   "title_en": "Late blight of potato and tomato",
+   "title_bn": "আলু ও টমেটোর নাবি ধসা (লেট ব্লাইট)",
+   "crop": "potato,tomato",
+   "type": "oomycete",
+   "keywords": [
+    "late blight",
+    "নাবি ধসা",
+    "লেট ব্লাইট",
+    "phytophthora",
+    "potato",
+    "আলু",
+    "tomato",
+    "টমেটো",
+    "কুয়াশা",
+    "fog",
+    "ধসা"
+   ],
+   "text_en": "Caused by Phytophthora infestans. Spreads fast in cool, moist weather: spores form at about 10–27 °C, most active 18–21 °C with RH about 90 %; at least 8 h of leaf wetness is needed for infection; symptoms appear 3–5 days later. Survives on living tissue: infected seed tubers, cull piles, volunteer potatoes, nightshade weeds and nearby tomatoes. Management: healthy/certified seed, destroy cull piles and volunteers, good hilling to cover tubers, keep canopy airy (weed control), irrigate in the daytime so foliage dries before night, start preventive protection before prolonged wet weather and repeat at 7–10 day intervals (shorter in cool rain) with products registered locally, remove infected plants when leaves are dry, avoid harvesting in wet weather.",
+   "text_bn": "ফাইটোফথোরা ইনফেস্টান্স জীবাণুতে হয়। ঠান্ডা ও স্যাঁতসেঁতে আবহাওয়ায় দ্রুত ছড়ায় — ১০–২৭°C, বিশেষত ১৮–২১°C ও ~৯০% আর্দ্রতায়; পাতা অন্তত ৮ ঘণ্টা ভেজা থাকলে সংক্রমণ হয়, ৩–৫ দিনে লক্ষণ দেখা দেয়। বাংলাদেশে শীতের কুয়াশাচ্ছন্ন দিনে আলু-টমেটোতে বড় ঝুঁকি। দমন: সুস্থ বীজআলু, ফেলে দেওয়া আলুর স্তূপ ও স্বেচ্ছায় গজানো গাছ নষ্ট করুন, ভালোভাবে মাটি তুলে দিন, দিনের বেলায় সেচ দিন যাতে রাতের আগে পাতা শুকায়; টানা ভেজা আবহাওয়ার আগেই প্রতিরোধমূলক ব্যবস্থা এবং কৃষি কর্মকর্তার পরামর্শে নিবন্ধিত ছত্রাকনাশক ৭–১০ দিন পরপর; আক্রান্ত গাছ শুকনো অবস্থায় তুলে মাটিচাপা দিন; ভেজা অবস্থায় আলু তুলবেন না।",
+   "source": {
+    "title": "Ontario Crop IPM (OMAFRA) — Potato late blight; UC IPM — Late blight",
+    "url": "https://cropipm.omafra.gov.on.ca/en-ca/crops/potatoes/diseases/804fa9d9-c964-4fc1-ab30-153137c3c6e1"
+   }
+  },
+  {
+   "id": "fall-armyworm",
+   "title_en": "Fall armyworm on maize",
+   "title_bn": "ভুট্টার ফল আর্মিওয়ার্ম (সেনাপোকা)",
+   "crop": "maize",
+   "type": "pest",
+   "keywords": [
+    "fall armyworm",
+    "আর্মিওয়ার্ম",
+    "সেনাপোকা",
+    "maize",
+    "ভুট্টা",
+    "spodoptera",
+    "whorl",
+    "neem",
+    "নিম"
+   ],
+   "text_en": "Invasive caterpillar of maize (Spodoptera frugiperda), reported across Bangladesh. FAO guidance: walk the field every 3–4 days from about one week after sowing; check leaves and whorls for egg masses, pinholes and window-paning; hand-pick and crush egg masses and young larvae ('use your fingers, not pesticides'). For 1st–2nd instar larvae, botanicals such as neem and biopesticides such as Bt, reaching leaf undersides. Use insecticides only consciously and judiciously for later instars; protect natural enemies.",
+   "text_bn": "ভুট্টার আক্রমণাত্মক কীড়া, বাংলাদেশেও ছড়িয়েছে। FAO-এর পরামর্শ: বপনের এক সপ্তাহ পর থেকে প্রতি ৩–৪ দিনে জমি ঘুরে পাতার নিচে ও মাথার ভেতরে (হুইর্ল) ডিমের গাদা ও ছোট ছিদ্র দেখুন; ডিম ও ছোট কীড়া হাতে তুলে নষ্ট করুন। প্রথম অবস্থার কীড়ায় নিমজাত বালাইনাশক বা Bt জৈব বালাইনাশক পাতার নিচেও দিন। রাসায়নিক কেবল বড় কীড়ায়, বিবেচনা করে ও কৃষি কর্মকর্তার পরামর্শে।",
+   "source": {
+    "title": "FAO — Integrated Fall Armyworm management (guidance notes)",
+    "url": "https://openknowledge.fao.org/server/api/core/bitstreams/b05c8901-0886-42db-8f4f-df2bdf761047/content"
+   }
+  },
+  {
+   "id": "ipm-principles",
+   "title_en": "Integrated Pest Management (IPM) first",
+   "title_bn": "সমন্বিত বালাই ব্যবস্থাপনা (আইপিএম)",
+   "crop": "all",
+   "type": "practice",
+   "keywords": [
+    "ipm",
+    "আইপিএম",
+    "সমন্বিত",
+    "natural enemies",
+    "উপকারী পোকা",
+    "pesticide",
+    "কীটনাশক",
+    "biological",
+    "জৈব"
+   ],
+   "text_en": "IPM (FAO definition) means careful consideration of all available pest control techniques and integration of measures that discourage pest populations and keep pesticides to levels that are economically justified and reduce risks to human health and the environment; it emphasises growing a healthy crop with least disruption to agro-ecosystems and encourages natural pest control. In practice: resistant varieties, clean seed, crop rotation, balanced fertiliser, regular scouting with action thresholds, mechanical/physical control, conserving natural enemies — and chemical pesticide only as the last option.",
+   "text_bn": "আইপিএম মানে সব দমন পদ্ধতি বিবেচনা করে এমনভাবে মেলানো যাতে বালাইয়ের সংখ্যা কম থাকে এবং কীটনাশক কেবল অর্থনৈতিকভাবে প্রয়োজনীয় মাত্রায় সীমিত থাকে, মানুষ ও পরিবেশের ঝুঁকি কমে। বাস্তবে: প্রতিরোধী জাত, সুস্থ বীজ, ফসল চক্র, সুষম সার, নিয়মিত জমি পর্যবেক্ষণ ও ক্ষতির সীমা মেনে ব্যবস্থা, হাতে বাছাই/ফাঁদ, উপকারী পোকা রক্ষা — আর রাসায়নিক কেবল শেষ উপায়।",
+   "source": {
+    "title": "FAO — Integrated Pest Management",
+    "url": "https://www.fao.org/pest-and-pesticide-management/ipm/integrated-pest-management/en/"
+   }
+  },
+  {
+   "id": "pesticide-safety",
+   "title_en": "Safe pesticide use and banned / highly hazardous chemicals",
+   "title_bn": "নিরাপদ বালাইনাশক ব্যবহার ও নিষিদ্ধ রাসায়নিক",
+   "crop": "all",
+   "type": "safety",
+   "keywords": [
+    "safety",
+    "নিরাপদ",
+    "ppe",
+    "মাস্ক",
+    "গ্লাভস",
+    "banned",
+    "নিষিদ্ধ",
+    "pops",
+    "who class",
+    "dose",
+    "মাত্রা",
+    "phi",
+    "poison",
+    "বিষ"
+   ],
+   "text_en": "Only use pesticides registered in Bangladesh, from licensed dealers, at the label dose; never mix several products on your own. Wear gloves, mask, long sleeves and boots; do not eat, drink or smoke while spraying; spray with your back to the wind, never in strong wind or before rain; keep children and animals away; wash and change clothes afterwards; respect the pre-harvest interval on the label before harvesting or selling; never reuse empty containers for food or water. Persistent organic pollutant pesticides listed under the Stockholm Convention (e.g. DDT, aldrin, dieldrin, endrin, chlordane, heptachlor, mirex, toxaphene, lindane, endosulfan) must not be used. WHO hazard class Ia/Ib active ingredients (extremely/highly hazardous) carry high poisoning risk; use only if registered and on an agriculture officer's advice. In case of poisoning, go to the nearest health complex immediately and bring the label.",
+   "text_bn": "শুধু বাংলাদেশে নিবন্ধিত, লাইসেন্সধারী দোকানের বালাইনাশক লেবেলের মাত্রায় ব্যবহার করুন; নিজে থেকে একাধিক ওষুধ মেশাবেন না। গ্লাভস, মাস্ক, লম্বা হাতা জামা ও বুট পরুন; স্প্রের সময় খাওয়া, পান বা ধূমপান নয়; বাতাসের দিকে পিঠ রেখে স্প্রে করুন, জোর বাতাস বা বৃষ্টির আগে নয়; শিশু ও গবাদিপশু দূরে রাখুন; পরে গোসল করে কাপড় বদলান; লেবেলে লেখা অপেক্ষার সময় (PHI) পার না হলে ফসল তুলবেন বা বিক্রি করবেন না; খালি বোতল খাবার/পানির কাজে নয়। স্টকহোম কনভেনশনের তালিকাভুক্ত স্থায়ী জৈব দূষক (ডিডিটি, অলড্রিন, ডাইএলড্রিন, এনড্রিন, ক্লোরডেন, হেপ্টাক্লোর, মিরেক্স, টক্সাফেন, লিনডেন, এন্ডোসালফান) ব্যবহার করা যাবে না। WHO শ্রেণি Ia/Ib অতি বিপজ্জনক — কেবল নিবন্ধিত হলে ও কৃষি কর্মকর্তার পরামর্শে। বিষক্রিয়া হলে লেবেলসহ দ্রুত নিকটস্থ স্বাস্থ্য কমপ্লেক্সে যান।",
+   "source": {
+    "title": "WHO Recommended Classification of Pesticides by Hazard (2019); Stockholm Convention on POPs — listed chemicals",
+    "url": "https://www.who.int/publications/i/item/9789240005662"
+   }
+  },
+  {
+   "id": "krishi-call-centre",
+   "title_en": "Krishi Call Centre 16123 and local agriculture office",
+   "title_bn": "কৃষি কল সেন্টার ১৬১২৩",
+   "crop": "all",
+   "type": "service",
+   "keywords": [
+    "16123",
+    "১৬১২৩",
+    "call centre",
+    "কল সেন্টার",
+    "hotline",
+    "officer",
+    "কর্মকর্তা",
+    "help",
+    "সাহায্য",
+    "ais",
+    "dae"
+   ],
+   "text_en": "Krishi Call Centre, short code 16123, run by the Agriculture Information Service (AIS) under the Ministry of Agriculture since 2014 (pilot 2012): farmers can call from any mobile operator for expert advice on crops, pests, diseases, fertiliser, livestock and fisheries. AIS lists a call rate of 25 paisa per minute (excluding VAT) and office-hour service on working days (hours have changed over time; check ais.gov.bd). For field visits and lab tests contact the Sub-Assistant Agriculture Officer (SAAO) of your union or the Upazila Agriculture Office (DAE).",
+   "text_bn": "কৃষি কল সেন্টার — শর্ট কোড ১৬১২৩, কৃষি মন্ত্রণালয়ের কৃষি তথ্য সার্ভিস (এআইএস) পরিচালিত। যেকোনো অপারেটর থেকে কল করে ফসল, পোকা, রোগ, সার, প্রাণিসম্পদ ও মৎস্য বিষয়ে বিশেষজ্ঞ পরামর্শ পাওয়া যায়; প্রতি মিনিট ২৫ পয়সা (ভ্যাট ছাড়া), কর্মদিবসে অফিস সময়ে (সময় পরিবর্তন হতে পারে — ais.gov.bd দেখুন)। জমি পরিদর্শন বা মাটি/গাছ পরীক্ষার জন্য আপনার ইউনিয়নের উপ-সহকারী কৃষি কর্মকর্তা (SAAO) বা উপজেলা কৃষি অফিসে যোগাযোগ করুন।",
+   "source": {
+    "title": "Agriculture Information Service (AIS) — Krishi Call Centre 16123",
+    "url": "https://ais.gov.bd/site/page/d9147061-2995-416f-b355-d7feb0d9f9a1/Krishi-call-centre-(16123)"
+   }
+  },
+  {
+   "id": "bmd-categories",
+   "title_en": "BMD heatwave, cold wave and heavy-rain categories",
+   "title_bn": "তাপপ্রবাহ, শৈত্যপ্রবাহ ও ভারী বৃষ্টির শ্রেণি (আবহাওয়া অধিদপ্তর)",
+   "crop": "all",
+   "type": "weather",
+   "keywords": [
+    "heatwave",
+    "তাপপ্রবাহ",
+    "cold wave",
+    "শৈত্যপ্রবাহ",
+    "heavy rain",
+    "ভারী বৃষ্টি",
+    "অতিবৃষ্টি",
+    "bmd",
+    "আবহাওয়া অধিদপ্তর",
+    "temperature",
+    "তাপমাত্রা",
+    "mm"
+   ],
+   "text_en": "Bangladesh Meteorological Department categories. Heat wave (maximum temperature): mild 36–38 °C, moderate 38–40 °C, severe 40–42 °C, very severe above 42 °C. Cold wave (minimum temperature): mild 8–10 °C, moderate 6–8 °C, severe 4–6 °C, very severe below 4 °C. Rainfall per day: light under 10 mm, moderate 11–22 mm, moderately heavy 23–43 mm, heavy 44–88 mm, very heavy above 88 mm. Chasha Bhai uses these thresholds in its risk rules.",
+   "text_bn": "বাংলাদেশ আবহাওয়া অধিদপ্তরের শ্রেণি। তাপপ্রবাহ (সর্বোচ্চ তাপমাত্রা): মৃদু ৩৬–৩৮°C, মাঝারি ৩৮–৪০°C, তীব্র ৪০–৪২°C, অতি তীব্র ৪২°C-এর বেশি। শৈত্যপ্রবাহ (সর্বনিম্ন তাপমাত্রা): মৃদু ৮–১০°C, মাঝারি ৬–৮°C, তীব্র ৪–৬°C, অতি তীব্র ৪°C-এর কম। দৈনিক বৃষ্টি: হালকা ১০ মিমি-এর কম, মাঝারি ১১–২২, মাঝারি-ভারী ২৩–৪৩, ভারী ৪৪–৮৮, অতি ভারী ৮৮ মিমি-এর বেশি। চাষা ভাই এই সীমাগুলোই ঝুঁকি নির্ণয়ে ব্যবহার করে।",
+   "source": {
+    "title": "BMD training note on forecast criteria (mdass.bmd.gov.bd)",
+    "url": "https://mdass.bmd.gov.bd/file/2017/08/16/pdf/45043.pdf"
+   }
+  },
+  {
+   "id": "ndvi-guide",
+   "title_en": "Reading the satellite crop-health (NDVI / NDWI / NDMI) panel",
+   "title_bn": "স্যাটেলাইট ফসল-স্বাস্থ্য (NDVI) কীভাবে বুঝবেন",
+   "crop": "all",
+   "type": "method",
+   "keywords": [
+    "ndvi",
+    "ndwi",
+    "ndmi",
+    "satellite",
+    "স্যাটেলাইট",
+    "sentinel",
+    "সবুজ",
+    "crop health",
+    "ফসলের স্বাস্থ্য",
+    "map",
+    "ম্যাপ"
+   ],
+   "text_en": "NDVI = (NIR − Red)/(NIR + Red) from Copernicus Sentinel-2 at 10 m, about every 5 days when cloud-free. Rough guide: below 0.2 bare soil, water or just-transplanted; 0.2–0.4 sparse/young crop; 0.4–0.6 moderate canopy; above 0.6 dense healthy canopy. NDWI (green vs NIR) above 0 means open water on the field (normal for transplanted paddy, a warning for other crops). NDMI (NIR vs SWIR) below 0 on a green crop suggests moisture stress. Chasha Bhai compares your field with its own recent median AND with vegetated land within 300 m: if neighbours dropped too it is likely season/harvest/weather; if only your field dropped, inspect for pest, disease, water or nutrient problems. Clouds and haze are masked; a field smaller than ~3 pixels (≈ 300 m²) is unreliable.",
+   "text_bn": "NDVI হলো স্যাটেলাইটের লাল ও অবলোহিত আলো থেকে গাছের সবুজতার মাপ (সেন্টিনেল-২, ১০ মিটার, মেঘ না থাকলে প্রায় প্রতি ৫ দিনে)। মোটামুটি: ০.২-এর কম খালি মাটি/পানি/সদ্য রোপণ; ০.২–০.৪ পাতলা বা কচি ফসল; ০.৪–০.৬ মাঝারি; ০.৬-এর বেশি ঘন সুস্থ ফসল। NDWI ০-এর বেশি মানে জমিতে পানি জমে আছে। NDMI ০-এর কম মানে পাতায় পানির ঘাটতি। চাষা ভাই আপনার জমিকে তার নিজের সাম্প্রতিক গড় এবং ৩০০ মিটারের মধ্যে আশেপাশের জমির সাথে তুলনা করে: সবার কমলে মৌসুম/ফসল কাটা/আবহাওয়া; শুধু আপনার কমলে পোকা, রোগ, পানি বা সারের সমস্যা হতে পারে — জমি দেখুন।",
+   "source": {
+    "title": "Chasha Bhai method note; Copernicus Sentinel-2 L2A (ESA)",
+    "url": "https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2"
+   }
+  },
+  {
+   "id": "spray-window",
+   "title_en": "When to spray: weather rules",
+   "title_bn": "কখন স্প্রে করবেন: আবহাওয়ার নিয়ম",
+   "crop": "all",
+   "type": "method",
+   "keywords": [
+    "spray",
+    "স্প্রে",
+    "wind",
+    "বাতাস",
+    "rain",
+    "বৃষ্টি",
+    "time",
+    "সময়",
+    "drift"
+   ],
+   "text_en": "Chasha Bhai marks a spray window when, between 06:00 and 17:59, wind is at most 10 km/h with gusts at most 20 km/h, no rain (≥ 0.2 mm or ≥ 40 % chance) is forecast for the next 4 hours, temperature is at most 32 °C and humidity below 95 %, for at least 2 consecutive hours. Reasons: wind causes drift onto people, water bodies and neighbouring crops; rain washes product off; heat increases evaporation and operator stress. Always follow the product label.",
+   "text_bn": "চাষা ভাই স্প্রের সময় দেখায় যখন সকাল ৬টা থেকে বিকেল ৬টার মধ্যে বাতাস ঘণ্টায় ১০ কিমি-এর কম (দমকা ২০ কিমি-এর কম), পরের ৪ ঘণ্টায় বৃষ্টির সম্ভাবনা নেই, তাপমাত্রা ৩২°C-এর কম ও আর্দ্রতা ৯৫%-এর কম — অন্তত টানা ২ ঘণ্টা। কারণ: বাতাসে ওষুধ মানুষ, পুকুর ও পাশের জমিতে উড়ে যায়; বৃষ্টিতে ধুয়ে যায়; গরমে দ্রুত উবে যায়। সবসময় লেবেলের নির্দেশ মানুন।",
+   "source": {
+    "title": "Chasha Bhai method note (api/lib/agrirules.php)",
+    "url": "docs/#whitepaper"
+   }
+  },
+  {
+   "id": "awd-irrigation",
+   "title_en": "Saving irrigation water in Boro rice: alternate wetting and drying (AWD)",
+   "title_bn": "বোরো ধানে পানি সাশ্রয়: পর্যায়ক্রমে ভেজানো ও শুকানো (এডব্লিউডি)",
+   "crop": "rice",
+   "type": "practice",
+   "keywords": [
+    "awd",
+    "এডব্লিউডি",
+    "irrigation",
+    "সেচ",
+    "water",
+    "পানি",
+    "boro",
+    "বোরো",
+    "pipe",
+    "পাইপ"
+   ],
+   "text_en": "AWD ('safe AWD') is an IRRI water-saving practice trialled by BRRI since 2005 and promoted in Bangladesh: a perforated 30 cm 'pani pipe' (field water tube, 10–15 cm wide, 15 cm above ground) shows the water level below the soil. When it drops to about 15 cm below the surface, re-irrigate to about 5 cm of ponded water. Keep the field flooded from one week before to one week after flowering. Start a few weeks after transplanting (later if weeds are heavy). IRRI reports about 30 % less water without yield penalty when done correctly; field studies in Bangladesh vary. Not recommended for rainfed rice. Chasha Bhai's irrigation card shows FAO-56 reference evapotranspiration minus forecast rain for the next 7 days as a guide.",
+   "text_bn": "এডব্লিউডি হলো ইরি-উদ্ভাবিত পানি সাশ্রয়ী পদ্ধতি, ব্রি ২০০৫ থেকে পরীক্ষা করছে: ৩০ সেমি লম্বা ছিদ্রযুক্ত 'পানি পাইপ' মাটিতে বসান (১৫ সেমি মাটির উপরে)। ভেতরের পানি মাটির প্রায় ১৫ সেমি নিচে নামলে আবার সেচ দিয়ে ~৫ সেমি পানি দাঁড় করান। ফুল আসার এক সপ্তাহ আগে থেকে এক সপ্তাহ পর পর্যন্ত জমিতে পানি রাখুন। রোপণের কয়েক সপ্তাহ পর শুরু করুন (আগাছা বেশি হলে আরও পরে)। সঠিকভাবে করলে ইরি-র হিসাবে ~৩০% পানি সাশ্রয় হয়, ফলন কমে না। বৃষ্টিনির্ভর ধানে নয়।",
+   "source": {
+    "title": "IRRI Rice Knowledge Bank — Saving water with Alternate Wetting Drying (AWD)",
+    "url": "http://knowledgebank.irri.org/step-by-step-production/growth/water-management/alternate-wetting-drying-awd"
+   }
+  },
+  {
+   "id": "photo-tips",
+   "title_en": "How to take a good diagnosis photo",
+   "title_bn": "রোগ নির্ণয়ের জন্য ভালো ছবি কীভাবে তুলবেন",
+   "crop": "all",
+   "type": "method",
+   "keywords": [
+    "photo",
+    "ছবি",
+    "camera",
+    "ক্যামেরা",
+    "blur",
+    "ঝাপসা",
+    "light",
+    "আলো",
+    "scan",
+    "স্ক্যান"
+   ],
+   "text_en": "Photograph one affected leaf (or stem/fruit) filling most of the frame, in daylight but not harsh direct sun, against a plain background, in focus. Include both affected and healthy-looking parts. Take 2–3 photos from different plants. For rice also photograph the base of the hill (planthoppers, sheath blight) and a whole-field view. Blurry, dark or distant photos lower confidence; the app will tell you if the photo is not usable.",
+   "text_bn": "একটি আক্রান্ত পাতা (বা কাণ্ড/ফল) ফ্রেমের বেশিরভাগ জুড়ে, দিনের আলোয় (কড়া রোদে নয়), সাধারণ পটভূমিতে, স্পষ্ট করে তুলুন। আক্রান্ত ও সুস্থ দুই অংশই রাখুন। ভিন্ন গাছ থেকে ২–৩টি ছবি নিন। ধানে গোছার গোড়া ও পুরো জমির ছবিও তুলুন। ঝাপসা, অন্ধকার বা দূরের ছবিতে নির্ভরযোগ্যতা কমে।",
+   "source": {
+    "title": "Chasha Bhai method note",
+    "url": "docs/#whitepaper"
+   }
+  }
+ ]
+}

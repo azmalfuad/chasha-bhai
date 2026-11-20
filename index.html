@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<title>চাষা ভাই — কৃষকের ডিজিটাল সঙ্গী</title>
+<meta name="description" content="চাষা ভাই: ছবি, আবহাওয়া ও স্যাটেলাইট — তিন চোখে ফসলের রোগ যাচাই, বাংলায় কথা বলে কৃষি পরামর্শ, কমিউনিটি রোগ সতর্কতা। Bangla-first AI crop doctor for Bangladeshi farmers.">
+<meta name="theme-color" content="#4f6b48">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Tiro+Bangla:ital@0;1&family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sage:#7a9471;
+    --sage-deep:#4f6b48;
+    --sage-soft:#c5d4bc;
+    --sage-glow:#8ab97e;
+    --cream:#faf7f0;
+    --cream-warm:#f3ecd9;
+    --ink:#2a3528;
+    --ink-soft:#5b6b57;
+    --amber:#c8924a;
+    --amber-soft:#e8c896;
+    --terracotta:#b66b4a;
+    --paper:#fffdf8;
+    --line:rgba(42,53,40,0.12);
+    --shadow-soft: 0 1px 2px rgba(42,53,40,0.04), 0 8px 30px rgba(42,53,40,0.08);
+    --shadow-card: 0 1px 2px rgba(42,53,40,0.05), 0 20px 60px rgba(42,53,40,0.12);
+    --shadow-deep: 0 2px 4px rgba(42,53,40,0.06), 0 30px 80px rgba(42,53,40,0.18);
+  }
+
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth; -webkit-text-size-adjust:100%;}
+  body{
+    font-family:'Hind Siliguri', sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+    overflow-x:hidden;
+    min-height:100vh;
+    position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%; display:block;}
+  button{font-family:inherit; cursor:pointer; border:none; background:none;}
+
+  /* ========= ANIMATED BACKGROUND SLIDER ========= */
+  .bg-slider{position:fixed; inset:0; z-index:-2; overflow:hidden;}
+  .bg-slide{
+    position:absolute; inset:0;
+    background-size:cover; background-position:center;
+    opacity:0;
+    animation: slideShow 32s infinite ease-in-out;
+    transform:scale(1.08);
+  }
+  .bg-slide:nth-child(1){background-image:url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1920&q=80'); animation-delay:0s;}
+  .bg-slide:nth-child(2){background-image:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1920&q=80'); animation-delay:8s;}
+  .bg-slide:nth-child(3){background-image:url('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=1920&q=80'); animation-delay:16s;}
+  .bg-slide:nth-child(4){background-image:url('https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=1920&q=80'); animation-delay:24s;}
+  @keyframes slideShow{
+    0%,2%{opacity:0; transform:scale(1.08);}
+    8%,22%{opacity:1; transform:scale(1.14);}
+    28%,100%{opacity:0; transform:scale(1.2);}
+  }
+  .bg-overlay{
+    position:fixed; inset:0; z-index:-1;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(250,247,240,0.55) 0%, rgba(250,247,240,0.82) 40%, rgba(250,247,240,0.92) 100%),
+      linear-gradient(180deg, rgba(255,253,248,0.7) 0%, rgba(243,236,217,0.85) 100%);
+  }
+  .bg-overlay::after{
+    content:''; position:absolute; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+    opacity:0.1; mix-blend-mode:multiply; pointer-events:none;
+  }
+
+  /* ========= CONTAINER ========= */
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+
+  /* ========= NAVIGATION ========= */
+  nav{
+    position:sticky; top:0; z-index:100;
+    padding:14px 0;
+    background:rgba(255,253,248,0.78);
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; gap:16px;}
+  .logo{display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--ink); flex-shrink:0;}
+  .logo-mark{
+    width:42px; height:42px; border-radius:12px;
+    background:linear-gradient(135deg, var(--sage) 0%, var(--sage-deep) 100%);
+    display:grid; place-items:center;
+    box-shadow:0 4px 16px rgba(122,148,113,0.35);
+    position:relative; overflow:hidden;
+    transition:transform 0.4s ease;
+  }
+  .logo-mark::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform:translateX(-100%);
+    transition:transform 0.8s ease;
+  }
+  .logo:hover .logo-mark{transform:rotate(-8deg) scale(1.05);}
+  .logo:hover .logo-mark::before{transform:translateX(100%);}
+  .logo-mark svg{width:24px; height:24px; stroke:var(--cream); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; position:relative; z-index:1;}
+  .logo-text{font-family:'Tiro Bangla', serif; font-size:20px; font-weight:500; letter-spacing:-0.2px; line-height:1.1;}
+  .logo-text span{
+    display:block; font-family:'Fraunces', serif;
+    font-size:9px; font-style:italic; letter-spacing:1.8px;
+    text-transform:uppercase; color:var(--ink-soft); margin-top:2px;
+  }
+  .nav-links{display:flex; gap:30px; list-style:none; align-items:center;}
+  .nav-links a{
+    text-decoration:none; color:var(--ink-soft); font-size:14px;
+    font-weight:500; transition:color 0.3s; position:relative;
+  }
+  .nav-links a:hover{color:var(--sage-deep);}
+  .nav-links a::after{
+    content:''; position:absolute; bottom:-6px; left:0;
+    width:0; height:1.5px; background:var(--sage);
+    transition:width 0.4s ease;
+  }
+  .nav-links a:hover::after{width:100%;}
+
+  .menu-btn{
+    display:none;
+    width:42px; height:42px;
+    border-radius:12px;
+    background:rgba(122,148,113,0.12);
+    border:1px solid var(--line);
+    align-items:center; justify-content:center;
+    transition:all 0.3s;
+  }
+  .menu-btn:hover{background:rgba(122,148,113,0.2);}
+  .menu-btn span{
+    display:block; width:18px; height:1.8px;
+    background:var(--ink); border-radius:2px;
+    position:relative;
+    transition:all 0.3s;
+  }
+  .menu-btn span::before,
+  .menu-btn span::after{
+    content:''; position:absolute; left:0; width:18px; height:1.8px;
+    background:var(--ink); border-radius:2px;
+    transition:all 0.3s;
+  }
+  .menu-btn span::before{top:-6px;}
+  .menu-btn span::after{top:6px;}
+  .menu-btn.open span{background:transparent;}
+  .menu-btn.open span::before{top:0; transform:rotate(45deg);}
+  .menu-btn.open span::after{top:0; transform:rotate(-45deg);}
+
+  .mobile-menu{
+    display:none;
+    position:fixed; top:70px; left:0; right:0;
+    background:rgba(255,253,248,0.98);
+    backdrop-filter:blur(24px);
+    border-bottom:1px solid var(--line);
+    padding:20px 28px;
+    transform:translateY(-20px);
+    opacity:0;
+    pointer-events:none;
+    transition:all 0.4s ease;
+    z-index:99;
+  }
+  .mobile-menu.open{transform:translateY(0); opacity:1; pointer-events:all;}
+  .mobile-menu ul{list-style:none; display:flex; flex-direction:column; gap:4px;}
+  .mobile-menu a{
+    display:block; padding:14px 16px;
+    text-decoration:none; color:var(--ink);
+    font-size:16px; font-weight:500;
+    border-radius:12px;
+    transition:background 0.3s;
+  }
+  .mobile-menu a:hover{background:rgba(122,148,113,0.12);}
+
+  /* ========= HERO ========= */
+  .hero{padding:72px 0 56px; text-align:center; position:relative;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:8px 18px;
+    background:rgba(255,253,248,0.7);
+    border:1px solid var(--line);
+    border-radius:100px;
+    font-family:'Fraunces', serif; font-style:italic;
+    font-size:13px; color:var(--sage-deep);
+    margin-bottom:28px;
+    backdrop-filter:blur(10px);
+    animation:fadeUp 1s ease 0.1s both;
+  }
+  .eyebrow::before{
+    content:''; width:6px; height:6px; border-radius:50%;
+    background:var(--sage);
+    box-shadow:0 0 0 4px rgba(122,148,113,0.2);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 4px rgba(122,148,113,0.2);}
+    50%{box-shadow:0 0 0 8px rgba(122,148,113,0.05);}
+  }
+
+  h1.display{
+    font-family:'Tiro Bangla', serif;
+    font-size:clamp(42px, 8vw, 92px);
+    font-weight:400; line-height:1;
+    letter-spacing:-1.5px; color:var(--ink);
+    margin-bottom:24px;
+    animation:fadeUp 1s ease 0.2s both;
+  }
+  h1.display .italic{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:300;
+    color:var(--sage-deep); display:block;
+    font-size:0.48em; letter-spacing:-0.5px; margin-top:12px;
+  }
+  .hero p.lead{
+    font-size:clamp(15px, 2vw, 18px); color:var(--ink-soft);
+    max-width:600px; margin:0 auto 42px; font-weight:400;
+    animation:fadeUp 1s ease 0.35s both;
+  }
+  @keyframes fadeUp{from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);}}
+
+  .hero-stats{
+    display:flex; justify-content:center;
+    gap:clamp(24px, 5vw, 56px);
+    flex-wrap:wrap;
+    animation:fadeUp 1s ease 0.5s both;
+  }
+  .stat{text-align:center;}
+  .stat-num{
+    font-family:'Fraunces', serif;
+    font-size:clamp(26px, 4vw, 34px);
+    font-weight:400; color:var(--sage-deep); line-height:1;
+  }
+  .stat-label{
+    font-size:11px; letter-spacing:1px;
+    text-transform:uppercase; color:var(--ink-soft);
+    margin-top:6px;
+  }
+  .stat-divider{width:1px; background:var(--line); align-self:stretch;}
+
+  /* ========= UPLOAD CARD ========= */
+  .upload-section{padding:40px 0 80px;}
+  .upload-card{
+    background:rgba(255,253,248,0.82);
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    border:1px solid rgba(255,255,255,0.7);
+    border-radius:28px;
+    padding:clamp(28px, 5vw, 52px);
+    box-shadow:var(--shadow-card);
+    max-width:860px; margin:0 auto;
+    position:relative; overflow:hidden;
+  }
+  .upload-card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+  }
+  .upload-card::after{
+    content:''; position:absolute;
+    top:16px; right:16px; width:24px; height:24px;
+    border-top:2px solid var(--sage-soft);
+    border-right:2px solid var(--sage-soft);
+    border-radius:0 8px 0 0;
+    opacity:0.5;
+  }
+  .corner-br{
+    position:absolute; bottom:16px; left:16px;
+    width:24px; height:24px;
+    border-bottom:2px solid var(--sage-soft);
+    border-left:2px solid var(--sage-soft);
+    border-radius:0 0 0 8px;
+    opacity:0.5;
+  }
+  .upload-head{text-align:center; margin-bottom:32px;}
+  .upload-head h2{
+    font-family:'Tiro Bangla', serif;
+    font-size:clamp(26px, 4.5vw, 34px);
+    font-weight:400; letter-spacing:-0.5px; margin-bottom:8px; line-height:1.2;
+  }
+  .upload-head p{color:var(--ink-soft); font-size:clamp(13px, 2vw, 15px);}
+
+  /* DROPZONE - Fixed centered flex layout */
+  .dropzone{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    border:2px dashed var(--sage-soft);
+    border-radius:22px;
+    padding:clamp(36px, 6vw, 56px) clamp(20px, 4vw, 40px);
+    text-align:center;
+    background:rgba(197,212,188,0.1);
+    cursor:pointer;
+    transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position:relative;
+    overflow:hidden;
+    min-height:320px;
+  }
+  .dropzone::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at center, rgba(122,148,113,0.12), transparent 70%);
+    opacity:0;
+    transition:opacity 0.5s;
+  }
+  .dropzone:hover{
+    border-color:var(--sage);
+    background:rgba(197,212,188,0.2);
+    transform:translateY(-3px);
+    box-shadow:0 16px 40px rgba(122,148,113,0.15);
+  }
+  .dropzone:hover::before{opacity:1;}
+  .dropzone.active{
+    border-color:var(--sage-deep);
+    background:rgba(197,212,188,0.3);
+    border-style:solid;
+  }
+  .dropzone-icon{
+    width:72px; height:72px;
+    border-radius:20px;
+    background:linear-gradient(135deg, rgba(122,148,113,0.18), rgba(122,148,113,0.08));
+    display:grid; place-items:center;
+    position:relative;
+    animation:float 3.5s ease-in-out infinite;
+  }
+  .dropzone-icon::before{
+    content:''; position:absolute; inset:-4px;
+    border-radius:22px;
+    border:1px solid rgba(122,148,113,0.25);
+    animation:ringPulse 3s ease-in-out infinite;
+  }
+  @keyframes ringPulse{
+    0%,100%{transform:scale(1); opacity:0.6;}
+    50%{transform:scale(1.15); opacity:0;}
+  }
+  .dropzone-icon svg{width:34px; height:34px; stroke:var(--sage-deep); stroke-width:1.8; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  @keyframes float{0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);}}
+
+  .dropzone-title{
+    font-family:'Tiro Bangla', serif;
+    font-size:clamp(19px, 3vw, 23px);
+    font-weight:400; color:var(--ink); line-height:1.3;
+  }
+  .dropzone-subtitle{
+    color:var(--ink-soft); font-size:13px;
+    font-family:'DM Mono', monospace; letter-spacing:0.5px;
+  }
+  .upload-btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 32px;
+    background:var(--ink); color:var(--paper);
+    border-radius:100px;
+    font-family:inherit; font-size:14px; font-weight:500;
+    transition:all 0.4s ease;
+    box-shadow:0 4px 20px rgba(42,53,40,0.2);
+    position:relative; overflow:hidden;
+    margin-top:4px;
+  }
+  .upload-btn::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, var(--sage-deep), var(--sage));
+    transform:translateY(100%);
+    transition:transform 0.4s ease;
+  }
+  .upload-btn:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(79,107,72,0.35);}
+  .upload-btn:hover::before{transform:translateY(0);}
+  .upload-btn svg, .upload-btn span{position:relative; z-index:1;}
+  #fileInput{display:none;}
+
+  /* ========= SCANNER VIEW ========= */
+  .scanner-view{
+    display:none;
+    margin-top:28px;
+    animation:fadeUp 0.6s ease;
+  }
+  .scanner-view.show{display:block;}
+  .scanner-frame{
+    position:relative;
+    border-radius:22px;
+    overflow:hidden;
+    background:#0d1512;
+    aspect-ratio:16/10;
+    box-shadow:0 20px 60px rgba(42,53,40,0.25);
+  }
+  .scanner-frame img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .scan-overlay{position:absolute; inset:0; pointer-events:none;}
+  .scan-grid{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(138,185,126,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(138,185,126,0.15) 1px, transparent 1px);
+    background-size:40px 40px;
+    opacity:0;
+    transition:opacity 0.5s;
+  }
+  .scanner-frame.scanning .scan-grid{opacity:1;}
+  .scan-corner{
+    position:absolute;
+    width:36px; height:36px;
+    border:2.5px solid var(--sage-glow);
+    opacity:0;
+    transition:opacity 0.4s, transform 0.4s;
+  }
+  .scanner-frame.scanning .scan-corner{opacity:1;}
+  .scan-corner.tl{top:16px; left:16px; border-right:none; border-bottom:none; border-radius:8px 0 0 0; transform:translate(-10px,-10px);}
+  .scan-corner.tr{top:16px; right:16px; border-left:none; border-bottom:none; border-radius:0 8px 0 0; transform:translate(10px,-10px);}
+  .scan-corner.bl{bottom:16px; left:16px; border-right:none; border-top:none; border-radius:0 0 0 8px; transform:translate(-10px,10px);}
+  .scan-corner.br{bottom:16px; right:16px; border-left:none; border-top:none; border-radius:0 0 8px 0; transform:translate(10px,10px);}
+  .scanner-frame.scanning .scan-corner{transform:translate(0,0);}
+  .scan-line{
+    position:absolute; left:0; right:0;
+    height:2px;
+    background:linear-gradient(90deg, transparent, var(--sage-glow) 20%, #e8f5e1 50%, var(--sage-glow) 80%, transparent);
+    box-shadow:0 0 24px var(--sage-glow), 0 0 40px rgba(138,185,126,0.5);
+    top:0;
+    opacity:0;
+  }
+  .scanner-frame.scanning .scan-line{
+    opacity:1;
+    animation:scanMove 2.5s ease-in-out infinite;
+  }
+  @keyframes scanMove{
+    0%,100%{top:8%;}
+    50%{top:92%;}
+  }
+  .scan-darken{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(13,21,18,0.3), rgba(13,21,18,0.1) 20%, rgba(13,21,18,0.1) 80%, rgba(13,21,18,0.3));
+    opacity:0;
+    transition:opacity 0.5s;
+  }
+  .scanner-frame.scanning .scan-darken{opacity:1;}
+  .scan-status{
+    position:absolute;
+    top:16px; left:50%;
+    transform:translateX(-50%) translateY(-20px);
+    display:flex; align-items:center; gap:10px;
+    padding:8px 16px;
+    background:rgba(13,21,18,0.85);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(138,185,126,0.4);
+    border-radius:100px;
+    opacity:0;
+    transition:all 0.5s;
+  }
+  .scanner-frame.scanning .scan-status{opacity:1; transform:translateX(-50%) translateY(0);}
+  .scan-status .led{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--sage-glow);
+    box-shadow:0 0 12px var(--sage-glow);
+    animation:ledBlink 1s infinite;
+  }
+  @keyframes ledBlink{0%,100%{opacity:1;} 50%{opacity:0.3;}}
+  .scan-status .text{
+    font-family:'DM Mono', monospace;
+    font-size:11px; color:#e8f5e1;
+    letter-spacing:1.5px; text-transform:uppercase;
+  }
+  .scan-status .percent{
+    font-family:'DM Mono', monospace;
+    font-size:11px; color:var(--sage-glow);
+    font-weight:600;
+  }
+  .detect-dot{
+    position:absolute;
+    width:14px; height:14px; border-radius:50%;
+    border:2px solid var(--sage-glow);
+    background:rgba(138,185,126,0.3);
+    opacity:0;
+    box-shadow:0 0 16px var(--sage-glow);
+    animation:dotAppear 0.6s ease forwards;
+    transform:translate(-50%,-50%);
+  }
+  @keyframes dotAppear{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(0);}
+    50%{opacity:1; transform:translate(-50%,-50%) scale(1.4);}
+    100%{opacity:0.9; transform:translate(-50%,-50%) scale(1);}
+  }
+
+  .scan-controls{
+    display:flex; gap:12px; margin-top:20px;
+    flex-wrap:wrap; justify-content:center;
+  }
+  .btn-scan{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 28px;
+    background:linear-gradient(135deg, var(--sage-deep), var(--sage));
+    color:var(--paper);
+    border-radius:100px;
+    font-size:14px; font-weight:600;
+    letter-spacing:0.5px;
+    transition:all 0.4s ease;
+    box-shadow:0 6px 24px rgba(79,107,72,0.35);
+    position:relative; overflow:hidden;
+  }
+  .btn-scan::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform:translateX(-100%);
+    transition:transform 0.6s;
+  }
+  .btn-scan:hover{transform:translateY(-2px); box-shadow:0 10px 32px rgba(79,107,72,0.45);}
+  .btn-scan:hover::before{transform:translateX(100%);}
+  .btn-scan:disabled{opacity:0.6; cursor:not-allowed; transform:none;}
+  .btn-scan svg{width:16px; height:16px; stroke:currentColor; stroke-width:2; fill:none;}
+
+  .btn-reset{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:14px 24px;
+    background:rgba(255,253,248,0.8);
+    color:var(--ink);
+    border:1px solid var(--line);
+    border-radius:100px;
+    font-size:14px; font-weight:500;
+    transition:all 0.3s;
+  }
+  .btn-reset:hover{background:var(--cream-warm); border-color:var(--sage-soft);}
+
+  /* ========= RESULTS GRID ========= */
+  .results{padding:64px 0 40px;}
+  .section-head{text-align:center; margin-bottom:48px;}
+  .section-head .tag{
+    font-family:'Fraunces', serif; font-style:italic;
+    font-size:13px; color:var(--amber);
+    letter-spacing:1.2px; display:inline-block; margin-bottom:12px;
+    position:relative; padding:0 32px;
+  }
+  .section-head .tag::before,
+  .section-head .tag::after{
+    content:''; position:absolute; top:50%;
+    width:20px; height:1px; background:var(--amber);
+  }
+  .section-head .tag::before{left:0;}
+  .section-head .tag::after{right:0;}
+  .section-head h2{
+    font-family:'Tiro Bangla', serif;
+    font-size:clamp(30px, 5vw, 44px);
+    font-weight:400; letter-spacing:-1px; margin-bottom:14px;
+    line-height:1.2;
+  }
+  .section-head p{color:var(--ink-soft); max-width:520px; margin:0 auto; font-size:15px;}
+
+  .grid{display:grid; grid-template-columns:repeat(12, 1fr); gap:22px;}
+  .card{
+    background:rgba(255,253,248,0.82);
+    backdrop-filter:blur(20px) saturate(170%);
+    -webkit-backdrop-filter:blur(20px) saturate(170%);
+    border:1px solid rgba(255,255,255,0.7);
+    border-radius:24px;
+    padding:clamp(24px, 3.5vw, 34px);
+    margin:10px;
+    box-shadow:var(--shadow-soft);
+    transition:all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position:relative; overflow:hidden;
+    opacity:0;
+    transform:translateY(40px);
+  }
+  .card.visible{opacity:1; transform:translateY(0);}
+  .card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+  }
+  .card:hover{
+    transform:translateY(-8px);
+    box-shadow:var(--shadow-deep);
+  }
+  .card-icon{
+    width:54px; height:54px; border-radius:15px;
+    display:grid; place-items:center;
+    margin-bottom:22px;
+    transition:transform 0.5s;
+  }
+  .card:hover .card-icon{transform:rotate(-6deg) scale(1.08);}
+  .card-icon svg{width:26px; height:26px; stroke-width:1.8; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  .icon-sage{background:rgba(122,148,113,0.15);} .icon-sage svg{stroke:var(--sage-deep);}
+  .icon-amber{background:rgba(200,146,74,0.15);} .icon-amber svg{stroke:var(--amber);}
+  .icon-terracotta{background:rgba(182,107,74,0.15);} .icon-terracotta svg{stroke:var(--terracotta);}
+  .icon-sky{background:rgba(100,140,170,0.15);} .icon-sky svg{stroke:#4a7090;}
+
+  .card h3{
+    font-family:'Tiro Bangla', serif;
+    font-size:clamp(21px, 3vw, 25px);
+    font-weight:400; margin-bottom:6px; letter-spacing:-0.3px; line-height:1.2;
+  }
+  .card .subtitle{
+    font-family:'Fraunces', serif; font-style:italic;
+    font-size:12px; color:var(--ink-soft);
+    letter-spacing:0.5px; margin-bottom:18px;
+  }
+  .card p{color:var(--ink-soft); font-size:14.5px; margin-bottom:18px; line-height:1.65;}
+  .card-list{list-style:none;}
+  .card-list li{
+    display:flex; align-items:flex-start; gap:12px;
+    padding:11px 0; font-size:14px; color:var(--ink);
+    border-bottom:1px dashed var(--line);
+    line-height:1.55;
+  }
+  .card-list li:last-child{border-bottom:none;}
+  .card-list li::before{
+    content:''; width:6px; height:6px; border-radius:50%;
+    background:var(--sage); margin-top:8px; flex-shrink:0;
+  }
+
+  .card-disease{grid-column:span 6;}
+  .card-nutrition{grid-column:span 6;}
+  .card-solution{grid-column:span 7;}
+  .card-land{grid-column:span 5;}
+
+  /* ========= WEATHER & DISASTER ========= */
+  .weather-disaster{padding:48px 0 72px;}
+  .wd-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:22px;}
+
+  .weather-card{
+    background:linear-gradient(135deg, rgba(255,253,248,0.88), rgba(227,238,224,0.78));
+    backdrop-filter:blur(24px) saturate(180%);
+    border:1px solid rgba(255,255,255,0.7);
+    border-radius:28px;
+    padding:clamp(28px, 4vw, 38px);
+    margin:10px;
+    position:relative; overflow:hidden;
+    box-shadow:var(--shadow-card);
+    opacity:0;
+    transform:translateY(40px);
+    transition:all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .weather-card.visible{opacity:1; transform:translateY(0);}
+  .weather-card::after{
+    content:''; position:absolute;
+    top:-80px; right:-80px;
+    width:260px; height:260px;
+    background:radial-gradient(circle, rgba(232,200,150,0.4), transparent 70%);
+    border-radius:50%;
+    animation:sunGlow 6s ease-in-out infinite;
+  }
+  @keyframes sunGlow{0%,100%{transform:scale(1);} 50%{transform:scale(1.15);}}
+  .weather-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; position:relative; gap:12px; flex-wrap:wrap;}
+  .weather-location h3{font-family:'Hind Siliguri', sans-serif; font-size:17px; font-weight:600; color:var(--ink);}
+  .weather-location p{font-size:11px; color:var(--ink-soft); font-family:'DM Mono', monospace; letter-spacing:0.5px; margin-top:2px;}
+  .weather-date{font-family:'DM Mono', monospace; font-size:11px; color:var(--ink-soft); letter-spacing:0.5px;}
+  .weather-temp{
+    font-family:'Fraunces', serif;
+    font-size:clamp(72px, 12vw, 104px);
+    font-weight:300; line-height:0.9;
+    color:var(--ink); letter-spacing:-4px;
+    position:relative;
+  }
+  .weather-temp sup{font-size:0.35em; vertical-align:top; margin-left:4px;}
+  .weather-condition{font-family:'Tiro Bangla', serif; font-size:clamp(19px, 3vw, 23px); color:var(--ink); margin-top:10px;}
+  .weather-sub{color:var(--ink-soft); font-size:13px; margin-top:4px;}
+  .weather-details{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:14px;
+    margin-top:28px; padding-top:24px;
+    border-top:1px solid var(--line); position:relative;
+  }
+  .weather-stat{text-align:left;}
+  .weather-stat svg{width:18px; height:18px; stroke:var(--sage-deep); stroke-width:1.8; fill:none; margin-bottom:8px;}
+  .weather-stat .lbl{font-size:10px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.8px; display:block; margin-bottom:3px;}
+  .weather-stat .val{font-family:'Fraunces', serif; font-size:17px; color:var(--ink); font-weight:500;}
+
+  .disaster-card{
+    background:rgba(255,253,248,0.85);
+    backdrop-filter:blur(24px) saturate(180%);
+    border:1px solid rgba(255,255,255,0.7);
+    border-radius:28px;
+    padding:clamp(26px, 4vw, 34px);
+    margin:10px;
+    box-shadow:var(--shadow-card);
+    opacity:0;
+    transform:translateY(40px);
+    transition:all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .disaster-card.visible{opacity:1; transform:translateY(0);}
+  .disaster-head{display:flex; align-items:center; gap:12px; margin-bottom:20px;}
+  .disaster-head h3{font-family:'Tiro Bangla', serif; font-size:22px; font-weight:400;}
+  .disaster-head .dot{
+    width:10px; height:10px; border-radius:50%;
+    background:var(--terracotta);
+    box-shadow:0 0 0 4px rgba(182,107,74,0.2);
+    animation:pulse 2s infinite;
+  }
+  .disaster-item{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 0; gap:12px;
+    border-bottom:1px dashed var(--line);
+    transition:all 0.3s;
+  }
+  .disaster-item:last-child{border-bottom:none;}
+  .disaster-item:hover{padding-left:6px;}
+  .disaster-info{display:flex; align-items:center; gap:12px; min-width:0;}
+  .disaster-icon{
+    width:38px; height:38px; border-radius:11px;
+    display:grid; place-items:center;
+    background:rgba(200,146,74,0.12);
+    flex-shrink:0;
+  }
+  .disaster-icon svg{width:18px; height:18px; stroke:var(--amber); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  .disaster-info .name{font-size:14px; font-weight:500; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .disaster-info .time{font-size:10px; color:var(--ink-soft); font-family:'DM Mono', monospace;}
+  .risk{
+    font-family:'DM Mono', monospace;
+    font-size:10px; padding:4px 9px;
+    border-radius:100px; letter-spacing:0.5px;
+    flex-shrink:0;
+  }
+  .risk-low{background:rgba(122,148,113,0.15); color:var(--sage-deep);}
+  .risk-mid{background:rgba(200,146,74,0.15); color:var(--amber);}
+  .risk-high{background:rgba(182,107,74,0.18); color:var(--terracotta);}
+
+  /* ========= FOOTER ========= */
+  footer{
+    padding:44px 0;
+    border-top:1px solid var(--line);
+    background:rgba(255,253,248,0.6);
+    backdrop-filter:blur(10px);
+    text-align:center;
+    margin-top:32px;
+  }
+  footer .logo{justify-content:center; margin-bottom:16px;}
+  footer p{color:var(--ink-soft); font-size:13px; font-family:'Fraunces', serif; font-style:italic;}
+  footer .copyright{margin-top:8px; font-family:'DM Mono', monospace; font-style:normal; font-size:10px; letter-spacing:1.5px;}
+
+  /* ========= LIVE CAMERA BUTTON IN DROPZONE ========= */
+  .dropzone-actions{
+    display:flex; gap:12px; flex-wrap:wrap; justify-content:center;
+    margin-top:4px;
+  }
+  .btn-camera{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 28px;
+    background:linear-gradient(135deg, var(--sage-deep), var(--sage));
+    color:var(--paper);
+    border-radius:100px;
+    font-family:inherit; font-size:14px; font-weight:600;
+    letter-spacing:0.3px;
+    transition:all 0.4s ease;
+    box-shadow:0 6px 22px rgba(79,107,72,0.35);
+    position:relative; overflow:hidden;
+  }
+  .btn-camera::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform:translateX(-100%);
+    transition:transform 0.6s;
+  }
+  .btn-camera:hover{transform:translateY(-2px); box-shadow:0 10px 30px rgba(79,107,72,0.45);}
+  .btn-camera:hover::before{transform:translateX(100%);}
+  .btn-camera svg{width:16px; height:16px; stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  .btn-camera .live-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:#ff6b5a;
+    box-shadow:0 0 10px #ff6b5a;
+    animation:ledBlink 1.2s infinite;
+  }
+  .btn-camera span{position:relative; z-index:1;}
+
+  /* ========= CAMERA MODAL ========= */
+  .cam-modal{
+    position:fixed; inset:0; z-index:1000;
+    background:rgba(13,21,18,0.96);
+    backdrop-filter:blur(12px);
+    display:none;
+    align-items:center; justify-content:center;
+    opacity:0;
+    transition:opacity 0.4s;
+  }
+  .cam-modal.open{display:flex; opacity:1;}
+  .cam-stage{
+    position:relative;
+    width:100%; height:100%;
+    max-width:900px; max-height:100vh;
+    display:flex; flex-direction:column;
+  }
+  .cam-video-wrap{
+    flex:1;
+    position:relative;
+    background:#000;
+    overflow:hidden;
+  }
+  #camVideo{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    transform:scaleX(1);
+  }
+  #camVideo.mirror{transform:scaleX(-1);}
+  /* Scanner overlay for live cam */
+  .cam-overlay{
+    position:absolute; inset:0;
+    pointer-events:none;
+  }
+  .cam-viewfinder{
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:min(72vw, 420px);
+    height:min(72vw, 420px);
+    max-width:90%;
+    max-height:60vh;
+    border-radius:24px;
+  }
+  .cam-corner{
+    position:absolute;
+    width:38px; height:38px;
+    border:3px solid var(--sage-glow);
+    box-shadow:0 0 20px rgba(138,185,126,0.5);
+  }
+  .cam-corner.tl{top:-2px; left:-2px; border-right:none; border-bottom:none; border-radius:14px 0 0 0;}
+  .cam-corner.tr{top:-2px; right:-2px; border-left:none; border-bottom:none; border-radius:0 14px 0 0;}
+  .cam-corner.bl{bottom:-2px; left:-2px; border-right:none; border-top:none; border-radius:0 0 0 14px;}
+  .cam-corner.br{bottom:-2px; right:-2px; border-left:none; border-top:none; border-radius:0 0 14px 0;}
+  .cam-scan-line{
+    position:absolute; left:10%; right:10%;
+    height:2px;
+    background:linear-gradient(90deg, transparent, var(--sage-glow) 30%, #e8f5e1 50%, var(--sage-glow) 70%, transparent);
+    box-shadow:0 0 18px var(--sage-glow), 0 0 32px rgba(138,185,126,0.5);
+    top:10%;
+    animation:camScan 3s ease-in-out infinite;
+  }
+  @keyframes camScan{
+    0%,100%{top:10%;}
+    50%{top:90%;}
+  }
+  .cam-hint{
+    position:absolute;
+    left:50%; bottom:-48px;
+    transform:translateX(-50%);
+    white-space:nowrap;
+    font-family:'DM Mono', monospace;
+    font-size:11px; color:rgba(255,255,255,0.75);
+    letter-spacing:1.5px; text-transform:uppercase;
+  }
+  /* Top bar */
+  .cam-top{
+    position:absolute;
+    top:0; left:0; right:0;
+    padding:20px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:linear-gradient(180deg, rgba(13,21,18,0.7), transparent);
+    z-index:2;
+  }
+  .cam-status{
+    display:flex; align-items:center; gap:10px;
+    padding:8px 16px;
+    background:rgba(13,21,18,0.6);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(138,185,126,0.35);
+    border-radius:100px;
+  }
+  .cam-status .rec-dot{
+    width:8px; height:8px; border-radius:50%;
+    background:#ff6b5a;
+    box-shadow:0 0 10px #ff6b5a;
+    animation:ledBlink 1s infinite;
+  }
+  .cam-status .text{
+    font-family:'DM Mono', monospace;
+    font-size:11px; color:#e8f5e1;
+    letter-spacing:1.3px; text-transform:uppercase;
+  }
+  .cam-btn-round{
+    width:42px; height:42px;
+    border-radius:50%;
+    background:rgba(13,21,18,0.6);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(138,185,126,0.35);
+    display:grid; place-items:center;
+    color:#e8f5e1;
+    cursor:pointer;
+    transition:all 0.3s;
+  }
+  .cam-btn-round:hover{background:rgba(138,185,126,0.25); transform:scale(1.06);}
+  .cam-btn-round svg{width:18px; height:18px; stroke:currentColor; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  .cam-top-right{display:flex; gap:10px;}
+
+  /* Bottom controls */
+  .cam-bottom{
+    position:absolute;
+    bottom:0; left:0; right:0;
+    padding:32px 24px 40px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:40px;
+    background:linear-gradient(0deg, rgba(13,21,18,0.8), transparent);
+    z-index:2;
+  }
+  .cam-capture{
+    width:76px; height:76px;
+    border-radius:50%;
+    background:transparent;
+    border:3px solid #e8f5e1;
+    cursor:pointer;
+    position:relative;
+    transition:transform 0.2s;
+    display:grid; place-items:center;
+  }
+  .cam-capture::before{
+    content:'';
+    width:58px; height:58px;
+    border-radius:50%;
+    background:#e8f5e1;
+    transition:all 0.2s;
+  }
+  .cam-capture:hover{transform:scale(1.05);}
+  .cam-capture:active::before{background:var(--sage-glow); transform:scale(0.88);}
+  .cam-capture:active{border-color:var(--sage-glow);}
+
+  /* Flash animation */
+  .cam-flash{
+    position:absolute; inset:0;
+    background:#fff;
+    opacity:0;
+    pointer-events:none;
+  }
+  .cam-flash.fire{animation:flashFire 0.4s ease;}
+  @keyframes flashFire{
+    0%{opacity:0;}
+    15%{opacity:0.85;}
+    100%{opacity:0;}
+  }
+
+  /* Error state */
+  .cam-error{
+    position:absolute;
+    inset:0;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#e8f5e1;
+    text-align:center;
+    padding:40px;
+  }
+  .cam-error.show{display:flex;}
+  .cam-error svg{width:48px; height:48px; stroke:#ff6b5a; stroke-width:1.5; fill:none; margin-bottom:16px;}
+  .cam-error h3{font-family:'Tiro Bangla', serif; font-size:22px; font-weight:400; margin-bottom:8px;}
+  .cam-error p{font-size:13px; color:rgba(255,255,255,0.7); max-width:320px; line-height:1.6;}
+
+  /* ========= DIVISION CAPSULES ========= */
+  .divisions-wrap{margin-bottom:22px; position:relative;}
+  .divisions-label{
+    font-family:'Fraunces', serif; font-style:italic;
+    font-size:12px; color:var(--ink-soft);
+    letter-spacing:1px; text-transform:uppercase;
+    margin-bottom:12px; display:flex; align-items:center; gap:10px;
+  }
+  .divisions-label::before,.divisions-label::after{
+    content:''; flex:1; height:1px; background:var(--line);
+  }
+  .divisions-scroll{
+    display:flex; gap:10px;
+    overflow-x:auto;
+    padding:4px 2px 8px;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+    scroll-behavior:smooth;
+    -webkit-overflow-scrolling:touch;
+  }
+  .divisions-scroll::-webkit-scrollbar{display:none;}
+  .div-cap{
+    flex-shrink:0;
+    padding:11px 22px;
+    background:rgba(255,253,248,0.78);
+    backdrop-filter:blur(14px);
+    border:1px solid var(--line);
+    border-radius:100px;
+    font-family:'Hind Siliguri', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition:all 0.35s cubic-bezier(0.16,1,0.3,1);
+    white-space:nowrap;
+    position:relative;
+  }
+  .div-cap:hover{
+    border-color:var(--sage);
+    color:var(--ink);
+    transform:translateY(-2px);
+    box-shadow:0 6px 18px rgba(122,148,113,0.18);
+  }
+  .div-cap.active{
+    background:linear-gradient(135deg, var(--sage-deep), var(--sage));
+    color:var(--paper);
+    border-color:transparent;
+    box-shadow:0 8px 22px rgba(79,107,72,0.38);
+  }
+  .div-cap.active::before{
+    content:''; position:absolute; top:50%; left:12px;
+    width:6px; height:6px; border-radius:50%;
+    background:var(--sage-glow);
+    box-shadow:0 0 10px var(--sage-glow);
+    transform:translateY(-50%);
+    animation:pulse 2s infinite;
+  }
+  .div-cap.active{padding-left:28px;}
+
+  /* ========= LOADING SHIMMER ========= */
+  .is-loading{pointer-events:none; opacity:0.85;}
+  .shimmer-text{
+    display:inline-block;
+    background:linear-gradient(90deg, rgba(122,148,113,0.12) 25%, rgba(122,148,113,0.24) 50%, rgba(122,148,113,0.12) 75%);
+    background-size:200% 100%;
+    color:transparent !important;
+    border-radius:4px;
+    animation:shimmerMove 1.4s infinite linear;
+    min-height:1em;
+  }
+  @keyframes shimmerMove{
+    0%{background-position:200% 0;}
+    100%{background-position:-200% 0;}
+  }
+
+  /* ========= TOAST NOTIFICATIONS ========= */
+  .toast-container{
+    position:fixed; top:86px; right:24px; z-index:2000;
+    display:flex; flex-direction:column; gap:10px;
+    pointer-events:none;
+    max-width:calc(100vw - 48px);
+  }
+  .toast{
+    pointer-events:all;
+    display:flex; align-items:flex-start; gap:12px;
+    padding:14px 18px 14px 16px;
+    background:rgba(255,253,248,0.96);
+    backdrop-filter:blur(24px) saturate(180%);
+    border:1px solid var(--line);
+    border-left:3px solid var(--sage);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    min-width:280px; max-width:380px;
+    font-size:13px; color:var(--ink);
+    transform:translateX(120%);
+    animation:toastIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  .toast.error{border-left-color:var(--terracotta);}
+  .toast.success{border-left-color:var(--sage-glow);}
+  .toast.info{border-left-color:var(--amber);}
+  .toast-icon{
+    width:22px; height:22px; border-radius:50%;
+    display:grid; place-items:center; flex-shrink:0;
+    margin-top:1px;
+  }
+  .toast.error .toast-icon{background:rgba(182,107,74,0.15);}
+  .toast.success .toast-icon{background:rgba(138,185,126,0.2);}
+  .toast.info .toast-icon{background:rgba(200,146,74,0.18);}
+  .toast-icon svg{width:12px; height:12px; stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round;}
+  .toast.error .toast-icon svg{stroke:var(--terracotta);}
+  .toast.success .toast-icon svg{stroke:var(--sage-deep);}
+  .toast.info .toast-icon svg{stroke:var(--amber);}
+  .toast-body{flex:1; min-width:0;}
+  .toast-title{font-weight:600; font-size:13px; margin-bottom:2px;}
+  .toast-msg{font-size:12px; color:var(--ink-soft); line-height:1.5;}
+  @keyframes toastIn{to{transform:translateX(0);}}
+  .toast.leaving{animation:toastOut 0.4s forwards;}
+  @keyframes toastOut{to{transform:translateX(120%); opacity:0;}}
+
+  /* ========= RESPONSIVE ========= */
+  @media (max-width: 880px){
+    .nav-links{display:none;}
+    .menu-btn{display:flex;}
+    .mobile-menu{display:block;}
+    .card-disease, .card-nutrition, .card-solution, .card-land{grid-column:span 12;}
+    .wd-grid{grid-template-columns:1fr;}
+    .weather-details{grid-template-columns:repeat(2, 1fr); gap:18px;}
+  }
+  @media (max-width: 520px){
+    .wrap{padding:0 20px;}
+    .hero{padding:56px 0 40px;}
+    .hero-stats{gap:24px;}
+    .stat-divider{display:none;}
+    .upload-section{padding:20px 0 60px;}
+    .dropzone{min-height:280px;}
+    .scanner-frame{aspect-ratio:4/3;}
+    .scan-corner{width:28px; height:28px;}
+    .btn-scan, .btn-reset{width:100%; justify-content:center;}
+    .section-head{margin-bottom:36px;}
+    .results{padding:40px 0 20px;}
+    .weather-disaster{padding:30px 0 50px;}
+    .logo-text{font-size:17px;}
+    .logo-text span{font-size:8px; letter-spacing:1.2px;}
+    .toast-container{top:auto; bottom:20px; right:20px; left:20px; max-width:none;}
+    .toast{min-width:0; max-width:none;}
+    .div-cap{padding:9px 18px; font-size:13px;}
+    .div-cap.active{padding-left:26px;}
+  }
+  @media (max-width: 380px){
+    .hero-stats{gap:16px;}
+    .stat-num{font-size:24px;}
+    .dropzone{padding:32px 16px; min-height:260px;}
+    .weather-temp{font-size:64px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+</style>
+<link rel="stylesheet" href="assets/chasha-v2.css">
+</head>
+<body>
+
+<!-- Animated Background Slider -->
+<div class="bg-slider">
+  <div class="bg-slide"></div>
+  <div class="bg-slide"></div>
+  <div class="bg-slide"></div>
+  <div class="bg-slide"></div>
+</div>
+<div class="bg-overlay"></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="wrap nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8 6 6 10 6 14a6 6 0 0 0 12 0c0-4-2-8-6-12z"/><path d="M12 14v8"/></svg>
+      </div>
+      <div class="logo-text">চাষা ভাই<span>Farmer's Companion</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#upload">রোগ নির্ণয়</a></li>
+      <li><a href="#weather">আবহাওয়া</a></li>
+      <li><a href="#satellite">স্যাটেলাইট</a></li>
+      <li><a href="#copilot">কৃষি পরামর্শ</a></li>
+      <li><a href="#outbreak">সতর্কতা</a></li>
+      <li><a href="docs/">Docs</a></li>
+    </ul>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu"><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="#upload">রোগ নির্ণয়</a></li>
+    <li><a href="#weather">আবহাওয়া</a></li>
+    <li><a href="#satellite">স্যাটেলাইট</a></li>
+    <li><a href="#copilot">কৃষি পরামর্শ</a></li>
+    <li><a href="#outbreak">সতর্কতা</a></li>
+    <li><a href="docs/">Docs</a></li>
+  </ul>
+</div>
+
+<!-- Hero -->
+<section class="hero wrap">
+  <span class="eyebrow">AI-চালিত কৃষি সহায়তা</span>
+  <h1 class="display">
+    মাটি থেকে ফসল —<br>
+    <span class="italic">every leaf tells a story</span>
+  </h1>
+  <p class="lead">ফসলের ছবি তুলুন — এআই রোগ শনাক্ত করবে, তারপর আপনার এলাকার আসল আবহাওয়া আর জমির স্যাটেলাইট ছবি দিয়ে সেই রায় যাচাই করবে। কেন এই সিদ্ধান্ত, তাও দেখাবে।</p>
+  <div class="row hero-cta" style="justify-content:center;margin:22px 0 30px"><a class="btn-v2" href="#upload">ছবি দিয়ে শুরু করুন</a><a class="btn-v2 ghost" href="#copilot">পরামর্শ নিন</a><button class="btn-v2 ghost install-btn" id="installBtn" type="button">অ্যাপ ইনস্টল করুন</button></div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">৩</div><div class="stat-label">চোখে যাচাই · ছবি+আবহাওয়া+স্যাটেলাইট</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-num">১০ মি</div><div class="stat-label">স্যাটেলাইট ফসল-স্বাস্থ্য</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-num">বাংলা</div><div class="stat-label">কথা বলে কৃষি পরামর্শ</div></div>
+  </div>
+</section>
+
+<!-- Upload -->
+<section class="upload-section wrap" id="upload">
+  <div class="upload-card">
+    <span class="corner-br"></span>
+    <div class="upload-head">
+      <h2>ফসলের ছবি আপলোড করুন</h2>
+      <p>পাতার কাছ থেকে একটি স্পষ্ট ছবি তুলুন — বাকিটা আমাদের এআই দেখবে</p>
+    </div>
+    <div class="dropzone" id="dropzone" role="button" tabindex="0">
+      <div class="dropzone-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <div class="dropzone-title">ছবি টেনে ছাড়ুন বা ক্যামেরা চালু করুন</div>
+      <div class="dropzone-subtitle">JPG · PNG · WEBP — সর্বোচ্চ ১০ MB</div>
+      <div class="dropzone-actions">
+        <button type="button" class="upload-btn" id="browseBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>ফাইল নির্বাচন</span>
+        </button>
+        <button type="button" class="btn-camera" id="liveCamBtn">
+          <span class="live-dot"></span>
+          <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>লাইভ স্ক্যান</span>
+        </button>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" />
+    </div>
+    <div class="scan-options" id="scanOptions">
+      <label>ফসল:
+        <select id="cropHint" aria-label="ফসল নির্বাচন">
+          <option value="">এআই নিজে চিনবে</option>
+          <option value="ধান (rice)">ধান</option><option value="আলু (potato)">আলু</option><option value="টমেটো (tomato)">টমেটো</option>
+          <option value="বেগুন (brinjal)">বেগুন</option><option value="ভুট্টা (maize)">ভুট্টা</option><option value="গম (wheat)">গম</option>
+          <option value="পাট (jute)">পাট</option><option value="মরিচ (chilli)">মরিচ</option><option value="সবজি (vegetable)">অন্যান্য সবজি</option>
+        </select>
+      </label>
+      <label title="আপনার এলাকার আবহাওয়া দিয়ে রোগ যাচাই"><input type="checkbox" id="useLoc" checked> আবহাওয়া দিয়ে যাচাই <span class="pill gray loc-chip" id="locChip">ঢাকা</span></label>
+      <label title="শুধু ~১১ কিমি এলাকা, তারিখ ও রোগের নাম যাবে — ছবি বা পরিচয় নয়"><input type="checkbox" id="shareAnon"> বেনামে রোগ রিপোর্ট শেয়ার করুন</label>
+    </div>
+
+    <!-- Scanner View -->
+    <div class="scanner-view" id="scannerView">
+      <div class="scanner-frame" id="scannerFrame">
+        <img id="previewImg" alt="Uploaded crop" />
+        <div class="scan-overlay">
+          <div class="scan-darken"></div>
+          <div class="scan-grid"></div>
+          <div class="scan-corner tl"></div>
+          <div class="scan-corner tr"></div>
+          <div class="scan-corner bl"></div>
+          <div class="scan-corner br"></div>
+          <div class="scan-line"></div>
+          <div class="scan-status">
+            <div class="led"></div>
+            <div class="text" id="scanText">Ready to scan</div>
+            <div class="percent" id="scanPercent">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="scan-controls">
+        <button class="btn-scan" id="scanBtn">
+          <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+          <span id="scanBtnText">স্ক্যান শুরু করুন</span>
+        </button>
+        <button class="btn-reset" id="resetBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          নতুন ছবি
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Results -->
+<section class="results wrap" id="results">
+  <div class="section-head">
+    <span class="tag">Analysis Report</span>
+    <h2>বিশ্লেষণের ফলাফল</h2>
+    <p>আপনার ফসলের স্বাস্থ্য, প্রয়োজনীয় পুষ্টি এবং সমাধানের বিস্তারিত পরামর্শ</p>
+  </div>
+
+  <div class="grid">
+    <div class="card card-fusion reveal" id="fusionCard" hidden>
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div>
+          <h3>তিন-চোখ যাচাই</h3>
+          <div class="subtitle">Three-Eye Check · Photo × Weather × Satellite</div>
+        </div>
+        <div class="row">
+          <button class="btn-v2 ghost" id="speakDiag" type="button"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>শুনুন</button>
+          <button class="btn-v2 ghost" id="askAboutDiag" type="button">পরামর্শ নিন</button>
+        </div>
+      </div>
+      <div class="conf-big"><span class="num" id="fConf">—</span><span id="fBand" class="pill">—</span><span id="fAgree" class="pill gray">—</span><span id="fCrop" class="pill gray">—</span></div>
+      <div class="bar"><i id="fBar" style="width:0%"></i></div>
+      <div class="eyes">
+        <div class="eye" id="eyePhoto"><div class="eye-h"><span class="ico"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>ছবি · Photo</div><div class="bar"><i style="width:0%"></i></div><p>—</p></div>
+        <div class="eye" id="eyeWeather"><div class="eye-h"><span class="ico"><svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></span>আবহাওয়া · Weather</div><div class="bar amber"><i style="width:0%"></i></div><p>—</p></div>
+        <div class="eye" id="eyeSat"><div class="eye-h"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M1 12h4M19 12h4M4.2 19.8 7 17M17 7l2.8-2.8"/></svg></span>স্যাটেলাইট · Satellite</div><div class="bar"><i style="width:0%"></i></div><p>—</p></div>
+      </div>
+      <ul class="why-list" id="fWhy"></ul>
+      <div class="escalate" id="fEscalate" hidden></div>
+      <details class="expl"><summary>সম্ভাব্য অন্য রোগ ও যাচাইয়ের উপায় (Differential)</summary><div id="fDiff"></div></details>
+      <details class="expl"><summary>সূত্র, নিরাপত্তা ও এআই কীভাবে সিদ্ধান্ত নিল</summary>
+        <div class="refs muted" id="fRefs" style="margin-top:8px"></div>
+        <ul class="safety-box" id="fSafety"></ul>
+        <div class="formula" id="fFormula"></div>
+        <div class="muted mono" id="fMeta" style="font-size:11px;margin-top:8px"></div>
+      </details>
+    </div>
+    <div class="card card-disease reveal">
+      <div class="card-icon icon-terracotta"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <h3 id="diseaseName">রোগ শনাক্তকরণ</h3>
+      <div class="subtitle" id="diseaseNameEn">Disease Detection</div>
+      <p id="diseaseDesc">উপরে একটি ফসলের ছবি আপলোড বা ক্যামেরা দিয়ে স্ক্যান করুন। এআই রোগ শনাক্ত করে বিস্তারিত ফলাফল এখানে দেখাবে।</p>
+      <ul class="card-list" id="diseaseSymptoms">
+        <li>পাতা, ফল বা কাণ্ডের ছবি তুলুন</li>
+        <li>সংক্রমিত এলাকা স্পষ্টভাবে দেখান</li>
+        <li>ভালো আলোতে ছবি তোলার চেষ্টা করুন</li>
+      </ul>
+    </div>
+
+    <div class="card card-nutrition reveal">
+      <div class="card-icon icon-sage"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l7 7"/></svg></div>
+      <h3>প্রয়োজনীয় পুষ্টি</h3>
+      <div class="subtitle">Required Nutrients</div>
+      <p id="nutrientsDesc">রোগ শনাক্ত হওয়ার পর গাছের জন্য প্রয়োজনীয় পুষ্টির তালিকা এখানে দেখানো হবে।</p>
+      <ul class="card-list" id="nutrientsList">
+        <li>নাইট্রোজেন (N) — পাতার সবুজতা ফিরাতে</li>
+        <li>পটাশিয়াম (K) — রোগ প্রতিরোধ ক্ষমতা বাড়াতে</li>
+        <li>ক্যালসিয়াম (Ca) — কোষ প্রাচীর শক্ত করতে</li>
+        <li>জিঙ্ক ও ম্যাগনেসিয়াম সম্পূরক</li>
+      </ul>
+    </div>
+
+    <div class="card card-solution reveal">
+      <div class="card-icon icon-amber"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      <h3>সমাধানের উপায়</h3>
+      <div class="subtitle">Treatment Plan</div>
+      <p id="treatmentDesc">ধাপে ধাপে সমাধানের নির্দেশনা — রোগ শনাক্ত হওয়ার পর এখানে প্রদর্শিত হবে।</p>
+      <ul class="card-list" id="treatmentSteps">
+        <li>ফসলের ছবি স্ক্যান করুন</li>
+        <li>এআই বিশ্লেষণের জন্য অপেক্ষা করুন</li>
+        <li>প্রদত্ত পরামর্শ অনুসরণ করুন</li>
+        <li>নিয়মিত গাছের অবস্থা পর্যবেক্ষণ করুন</li>
+      </ul>
+    </div>
+
+    <div class="card card-land reveal">
+      <div class="card-icon icon-sage"><svg viewBox="0 0 24 24"><path d="M2 22l10-10 10 10"/><path d="M4 22V11l8-8 8 8v11"/><line x1="12" y1="3" x2="12" y2="22"/></svg></div>
+      <h3>জমি ব্যবস্থাপনা</h3>
+      <div class="subtitle">Land Management</div>
+      <ul class="card-list" id="landTips">
+        <li>মাটির pH ৬.০–৬.৮ বজায় রাখুন</li>
+        <li>ফসল চক্র (Crop Rotation) অনুসরণ করুন</li>
+        <li>জৈব সার ও কম্পোস্ট মিশান</li>
+        <li>জলাবদ্ধতা এড়াতে নিকাশি ব্যবস্থা রাখুন</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Weather & Disaster -->
+<section class="weather-disaster wrap" id="weather">
+  <div class="section-head">
+    <span class="tag">Local Forecast</span>
+    <h2>আবহাওয়া ও দুর্যোগ</h2>
+    <p>আপনার এলাকার সর্বশেষ আবহাওয়ার তথ্য এবং সম্ভাব্য ঝুঁকি</p>
+  </div>
+
+  <!-- Division Selector Capsules -->
+  <div class="divisions-wrap">
+    <div class="divisions-label">বিভাগ নির্বাচন করুন · Choose Division</div>
+    <div class="divisions-scroll" id="divisionsScroll">
+      <button class="div-cap active" data-location="Dhaka">ঢাকা</button>
+      <button class="div-cap" data-location="Chattogram">চট্টগ্রাম</button>
+      <button class="div-cap" data-location="Rajshahi">রাজশাহী</button>
+      <button class="div-cap" data-location="Khulna">খুলনা</button>
+      <button class="div-cap" data-location="Barishal">বরিশাল</button>
+      <button class="div-cap" data-location="Sylhet">সিলেট</button>
+      <button class="div-cap" data-location="Rangpur">রংপুর</button>
+      <button class="div-cap" data-location="Mymensingh">ময়মনসিংহ</button>
+    </div>
+  </div>
+
+  <div class="loc-bar">
+    <input class="field-input" id="placeSearch" type="search" placeholder="জেলা / উপজেলা খুঁজুন (যেমন: Bogura, Kurigram)" aria-label="স্থান খুঁজুন" list="placeList">
+    <datalist id="placeList"></datalist>
+    <button class="btn-v2 ghost" id="placeBtn" type="button">খুঁজুন</button>
+    <button class="btn-v2" id="gpsBtn" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>আমার অবস্থান</button>
+  </div>
+  <div class="wd-grid">
+    <div class="weather-card reveal" id="weatherCard">
+      <div class="weather-head">
+        <div class="weather-location">
+          <h3 id="wLocation">ঢাকা, বাংলাদেশ</h3>
+          <p id="wLocationEn">Dhaka · BD</p>
+        </div>
+        <div class="weather-date" id="wDate">—</div>
+      </div>
+      <div class="weather-temp"><span id="wTemp">—</span><sup>°C</sup></div>
+      <div class="weather-condition" id="wCondition">লোড হচ্ছে...</div>
+      <div class="weather-sub" id="wSub">অনুভূত হচ্ছে — · বাতাস —</div>
+      <div class="weather-details">
+        <div class="weather-stat">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          <span class="lbl">আর্দ্রতা</span><span class="val" id="wHumidity">—</span>
+        </div>
+        <div class="weather-stat">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+          <span class="lbl">বাতাস</span><span class="val" id="wWind">—</span>
+        </div>
+        <div class="weather-stat">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+          <span class="lbl">UV সূচক</span><span class="val" id="wUV">—</span>
+        </div>
+        <div class="weather-stat">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          <span class="lbl">বৃষ্টি</span><span class="val" id="wRain">—</span>
+        </div>
+      </div>
+      <div class="days" id="wDays" style="margin-top:18px"></div>
+      <div class="src-line" id="wSource">—</div>
+    </div>
+
+    <div class="disaster-card reveal">
+      <div class="disaster-head"><div class="dot"></div><h3>দুর্যোগ ও ফসলের ঝুঁকি</h3></div>
+      <p class="muted" style="margin:-10px 0 6px;font-size:12.5px">আসল পূর্বাভাসের সংখ্যা থেকে নির্দিষ্ট নিয়মে হিসাব — যেকোনো ঝুঁকিতে চাপ দিয়ে নিয়ম ও প্রমাণ দেখুন।</p>
+      <div id="disasterList">
+        <div class="disaster-item">
+          <div class="disaster-info">
+            <div class="disaster-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div>
+            <div><div class="name">লোড হচ্ছে...</div><div class="time">অনুগ্রহ করে অপেক্ষা করুন</div></div>
+          </div>
+          <div class="risk risk-low">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="wrap">
+  <div class="wx-extra">
+    <div class="glass reveal-v2"><h3>এআই কৃষি পরামর্শ</h3><div class="subtitle">AI advisory · explains the numbers</div><ul class="advice" id="wAdvice"><li class="muted">লোড হচ্ছে...</li></ul><div class="src-line" id="wAdviceMeta"></div></div>
+    <div class="glass reveal-v2"><h3>স্প্রে করার সময়</h3><div class="subtitle">Safe spray windows · next 48 h</div><div id="wSpray"><span class="muted">লোড হচ্ছে...</span></div><details class="expl"><summary>নিয়ম</summary><div class="muted" id="wSprayRule" style="font-size:12px;margin-top:6px"></div></details></div>
+    <div class="glass reveal-v2"><h3>সেচের হিসাব</h3><div class="subtitle">Water balance · next 7 days</div><div id="wIrr"><span class="muted">লোড হচ্ছে...</span></div></div>
+  </div>
+</div>
+</section>
+
+<!-- Satellite crop health -->
+<section class="v2-section wrap" id="satellite">
+  <div class="section-head">
+    <span class="tag">স্যাটেলাইট থেকে জমি দেখা</span>
+    <h2>স্যাটেলাইটে জমির স্বাস্থ্য</h2>
+    <p>মানচিত্রে আপনার জমি আঁকুন — গত ৪ মাসের স্যাটেলাইট ছবি থেকে দেখুন — ফসল কতটা সবুজ ও সতেজ, আগের চেয়ে ভালো না খারাপ, আর আশেপাশের জমির তুলনায় কেমন</p>
+  </div>
+  <div class="sat-grid">
+    <div class="glass">
+      <div class="map-box" id="satMap"><div class="map-hint" id="satHint">জমির কোণাগুলোতে একে একে ট্যাপ করুন, তারপর “বিশ্লেষণ করুন” চাপুন। অথবা শুধু এক জায়গায় ট্যাপ করুন (৫০ মি বৃত্ত)।</div></div>
+      <div class="map-tools">
+        <button class="btn-v2" id="satRun" type="button" disabled>বিশ্লেষণ করুন</button>
+        <button class="btn-v2 ghost" id="satUndo" type="button">শেষ বিন্দু মুছুন</button>
+        <button class="btn-v2 ghost" id="satClear" type="button">নতুন করে আঁকুন</button>
+        <button class="btn-v2 ghost" id="satGps" type="button">আমার জমিতে যান</button>
+      </div>
+    </div>
+    <div class="glass" id="satResult">
+      <h3>ফলাফল</h3><div class="subtitle">মহাকাশ থেকে ফসলের অবস্থা</div>
+      <p class="muted" id="satEmpty">এখনো কোনো জমি বিশ্লেষণ করা হয়নি। মানচিত্রে জমি চিহ্নিত করুন।</p>
+      <div id="satBody" hidden>
+        <div class="row" style="justify-content:space-between;align-items:flex-start">
+          <div><div class="muted">ফসলের সবুজতা · <span id="satDate">—</span></div><div class="ndvi-big" id="satNdvi">—</div><div class="muted" id="satScore" style="font-size:12px"></div><div id="satClass" class="muted"></div></div>
+          <img class="sat-thumb" id="satThumb" alt="জমির সবুজতার মানচিত্র">
+        </div>
+        <div class="row" style="margin:10px 0"><span class="pill" id="satLevel">—</span><span class="pill gray" id="satAttr">—</span><span class="pill gray" id="satArea">—</span></div>
+        <svg class="spark" id="satSpark" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid meet" role="img" aria-label="সবুজতার পরিবর্তন"></svg>
+        <div class="legend"><span>— আপনার জমির সবুজতা</span><span style="color:#c8924a">- - আশেপাশের জমি (৩০০ মি)</span><span>উপরে = বেশি সবুজ</span></div>
+        <ul class="why-list" id="satFlags"></ul>
+        <p class="muted" id="satCaveat" style="font-size:12.5px;margin-top:8px"></p>
+        <div class="row" style="margin-top:10px"><button class="btn-v2 amber" id="satToScan" type="button">এই জমির পাতা স্ক্যান করুন</button></div>
+        <div class="src-line" id="satSource"></div>
+      </div>
+      <div class="sat-loading" id="satLoading" hidden><div class="spinner"></div><span>স্যাটেলাইট ছবি পড়া হচ্ছে… (১০–৪০ সেকেন্ড)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Krishi Copilot -->
+<section class="v2-section wrap" id="copilot">
+  <div class="section-head">
+    <span class="tag">কথা বলুন বা লিখুন</span>
+    <h2>কৃষি পরামর্শ</h2>
+    <p>বাংলায় বলুন বা লিখুন — যাচাইকৃত সূত্র (ব্রি/ইরি/এফএও/আবহাওয়া অধিদপ্তর) থেকে উত্তর, সূত্রসহ</p>
+  </div>
+  <div class="glass" style="max-width:860px;margin:0 auto">
+    <div class="chat" id="chat" aria-live="polite">
+      <div class="msg bot">আসসালামু আলাইকুম! আমি চাষা ভাই, আপনার কৃষি পরামর্শদাতা। ফসলের রোগ, পোকা, সার, সেচ বা আজকের আবহাওয়ায় স্প্রে করা যাবে কিনা — জিজ্ঞেস করুন। 🎙 মাইকে চাপ দিয়ে বাংলায় বলতেও পারেন।</div>
+    </div>
+    <div class="chips" id="chips">
+      <button class="chip" type="button">ধানের পাতায় চোখের মতো দাগ, কী করব?</button>
+      <button class="chip" type="button">আজ কি কীটনাশক স্প্রে করা যাবে?</button>
+      <button class="chip" type="button">কারেন্ট পোকা দমনের উপায়</button>
+      <button class="chip" type="button">বোরো ধানে সেচ কম লাগাতে চাই</button>
+      <button class="chip" type="button">আলুর নাবি ধসা রোগ থেকে বাঁচাব কীভাবে?</button>
+    </div>
+    <form class="row" id="chatForm" autocomplete="off">
+      <button class="mic" id="micBtn" type="button" aria-label="বাংলায় বলুন"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="22"/></svg></button>
+      <input class="field-input" id="chatInput" placeholder="আপনার প্রশ্ন লিখুন..." maxlength="600" aria-label="প্রশ্ন">
+      <button class="btn-v2" id="chatSend" type="submit">পাঠান</button>
+    </form>
+    <p class="muted" style="font-size:11.5px;margin-top:10px">উত্তর এআই-তৈরি, ভুল হতে পারে। গুরুতর সমস্যায় কৃষি কল সেন্টার ১৬১২৩-এ ফোন করুন। বাজারদর দেখানো হয় না (যাচাইকৃত উৎস সংযুক্ত নেই)।</p>
+  </div>
+</section>
+
+<!-- Community outbreak early warning -->
+<section class="v2-section wrap" id="outbreak">
+  <div class="section-head">
+    <span class="tag">Community Early Warning</span>
+    <h2>এলাকায় রোগের সতর্কতা</h2>
+    <p>কৃষকদের বেনামি স্ক্যান রিপোর্ট থেকে — কোন এলাকায় কোন রোগ বাড়ছে, আগেভাগে জানুন</p>
+  </div>
+  <div class="sat-grid">
+    <div class="glass"><div class="map-box small" id="obMap"></div></div>
+    <div class="glass">
+      <h3>সক্রিয় এলাকা</h3><div class="subtitle">Last 21 days · k-anonymous</div>
+      <ul class="ob-list" id="obList"><li class="muted">লোড হচ্ছে...</li></ul>
+      <details class="expl"><summary>গোপনীয়তা কীভাবে রক্ষা হয়?</summary>
+        <ul class="safety-box">
+          <li>শুধু আপনি “বেনামে শেয়ার” টিক দিলে রিপোর্ট যায়।</li>
+          <li>ছবি, ফোন নম্বর, নাম, আইপি বা সঠিক অবস্থান সংরক্ষণ হয় না — শুধু ~১১ কিমি গ্রিড, তারিখ, ফসল ও রোগের নাম।</li>
+          <li>কোনো গ্রিডে ৩টির কম রিপোর্ট থাকলে তা দেখানো হয় না (k-anonymity)।</li>
+        </ul>
+      </details>
+      <div class="src-line" id="obMeta"></div>
+    </div>
+  </div>
+</section>
+
+<div class="offline-banner" id="offlineBanner">অফলাইন — শেষ সংরক্ষিত তথ্য দেখানো হচ্ছে</div>
+
+<!-- Footer -->
+<footer id="contact">
+  <div class="wrap">
+    <a href="#" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 2C8 6 6 10 6 14a6 6 0 0 0 12 0c0-4-2-8-6-12z"/><path d="M12 14v8"/></svg></div>
+      <div class="logo-text">চাষা ভাই<span>Farmer's Companion</span></div>
+    </a>
+    <p>মাটির সাথে, কৃষকের পাশে — সবসময়</p>
+    <a class="hotline" href="tel:16123">☎ কৃষি কল সেন্টার ১৬১২৩</a>
+    <div class="foot-links"><a href="docs/">পিচ ডেক ও টেকনিক্যাল হোয়াইটপেপার</a><a href="docs/#dashboard">সিস্টেম স্ট্যাটাস</a><a href="#copilot">কৃষি পরামর্শ</a></div>
+    <p class="credits">আবহাওয়া: Open-Meteo.com (CC BY 4.0) · স্যাটেলাইট: Copernicus Sentinel-2 (ESA), Element84 Earth Search / AWS Open Data · মানচিত্র: © OpenStreetMap contributors, Esri World Imagery · এআই: AI AI · জ্ঞানভান্ডার: IRRI Rice Knowledge Bank, FAO, BMD, AIS সারাংশ। এআই পরামর্শ চূড়ান্ত রোগ নির্ণয় নয়।</p>
+    <p class="copyright">© 2026 · TEAM SYNTAX ERROR! · CRAFTED WITH ◉ FOR BANGLADESHI FARMERS</p>
+  </div>
+</footer>
+
+<!-- Toast Notifications -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Camera Modal -->
+<div class="cam-modal" id="camModal">
+  <div class="cam-stage">
+    <div class="cam-video-wrap">
+      <video id="camVideo" autoplay playsinline muted></video>
+      <div class="cam-overlay">
+        <div class="cam-viewfinder">
+          <div class="cam-corner tl"></div>
+          <div class="cam-corner tr"></div>
+          <div class="cam-corner bl"></div>
+          <div class="cam-corner br"></div>
+          <div class="cam-scan-line"></div>
+          <div class="cam-hint">পাতাকে ফ্রেমের ভেতরে রাখুন</div>
+        </div>
+      </div>
+      <div class="cam-flash" id="camFlash"></div>
+
+      <div class="cam-error" id="camError">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        <h3>ক্যামেরা অ্যাক্সেস নেই</h3>
+        <p id="camErrorText">অনুগ্রহ করে ব্রাউজার সেটিংস থেকে ক্যামেরার অনুমতি দিন এবং আবার চেষ্টা করুন।</p>
+      </div>
+
+      <div class="cam-top">
+        <div class="cam-status">
+          <div class="rec-dot"></div>
+          <div class="text">LIVE · SCANNING</div>
+        </div>
+        <div class="cam-top-right">
+          <button class="cam-btn-round" id="camSwitchBtn" aria-label="Switch Camera">
+            <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </button>
+          <button class="cam-btn-round" id="camCloseBtn" aria-label="Close">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="cam-bottom">
+        <button class="cam-capture" id="camCaptureBtn" aria-label="Capture"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/chasha-core.js"></script>
+<script>
+  // ============ API ENDPOINTS ============
+  const API_BASE = './api';
+  const DISEASE_ENDPOINT = `${API_BASE}/disease.php`;
+  const WEATHER_ENDPOINT = `${API_BASE}/weather.php`;
+
+  // Currently loaded image (base64 data URL) used for disease API call
+  let currentImageData = null;
+
+  // Bengali digit conversion helper
+  function toBn(num) {
+    if (num === '—' || num == null || num === '') return '—';
+    const bn = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+    return String(num).replace(/\d/g, d => bn[d]);
+  }
+
+  // ============ TOAST NOTIFICATIONS ============
+  function showToast(type, title, msg, duration = 5500) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icons = {
+      error:   '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+      success: '<polyline points="20 6 9 17 4 12"/>',
+      info:    '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'
+    };
+    toast.innerHTML = `
+      <div class="toast-icon"><svg viewBox="0 0 24 24">${icons[type] || icons.info}</svg></div>
+      <div class="toast-body">
+        <div class="toast-title">${title}</div>
+        <div class="toast-msg">${msg}</div>
+      </div>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('leaving');
+      setTimeout(() => toast.remove(), 400);
+    }, duration);
+  }
+
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    menuBtn.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      menuBtn.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    });
+  });
+
+  // Upload handling
+  const fileInput = document.getElementById('fileInput');
+  const dropzone = document.getElementById('dropzone');
+  const browseBtn = document.getElementById('browseBtn');
+  const scannerView = document.getElementById('scannerView');
+  const scannerFrame = document.getElementById('scannerFrame');
+  const previewImg = document.getElementById('previewImg');
+  const scanBtn = document.getElementById('scanBtn');
+  const scanBtnText = document.getElementById('scanBtnText');
+  const resetBtn = document.getElementById('resetBtn');
+  const scanText = document.getElementById('scanText');
+  const scanPercent = document.getElementById('scanPercent');
+
+  fileInput.addEventListener('change', handleFile);
+
+  // Browse button triggers file input
+  browseBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fileInput.click();
+  });
+
+  // Clicking the empty dropzone area (not on buttons) also opens file picker
+  dropzone.addEventListener('click', (e) => {
+    if (e.target.closest('.btn-camera') || e.target.closest('.upload-btn')) return;
+    fileInput.click();
+  });
+  dropzone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+
+  ['dragenter', 'dragover'].forEach(evt => {
+    dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.add('active'); });
+  });
+  ['dragleave', 'drop'].forEach(evt => {
+    dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('active'); });
+  });
+  dropzone.addEventListener('drop', (e) => {
+    const file = e.dataTransfer.files[0];
+    if (file) { fileInput.files = e.dataTransfer.files; handleFile(); }
+  });
+
+  function handleFile() {
+    const file = fileInput.files[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('error', 'ছবি অনেক বড়', 'অনুগ্রহ করে ১০ MB এর কম ছবি নির্বাচন করুন।');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      // v2: downscale to ≤1280 px JPEG before upload (fewer image tokens, faster on 3G)
+      const small = await CB.downscale(e.target.result);
+      currentImageData = small;
+      previewImg.src = small;
+      dropzone.style.display = 'none';
+      scannerView.classList.add('show');
+      scanText.textContent = 'Ready to scan';
+      scanPercent.textContent = '—';
+      scanBtnText.textContent = 'স্ক্যান শুরু করুন';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ============ DISEASE API CALL ============
+  async function callDiseaseAPI(imageDataUrl) {
+    const res = await fetch(DISEASE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(CB.diseasePayload(imageDataUrl))
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `সার্ভার ত্রুটি (HTTP ${res.status})`);
+    }
+    const data = await res.json();
+    CB.saveLast('diagnosis', data);
+    return data;
+  }
+
+  // ============ RENDER DISEASE RESULTS ============
+  function renderDiseaseResults(data) {
+    try {
+      const d = data.disease_detection || {};
+      document.getElementById('diseaseName').textContent = d.disease_bn || d.disease || 'রোগ শনাক্তকরণ';
+      document.getElementById('diseaseNameEn').textContent = d.disease || 'Disease Detection';
+
+      const descParts = [];
+      if (d.symptoms) descParts.push(d.symptoms);
+      if (d.infection_level) descParts.push(`সংক্রমণের মাত্রা: ${d.infection_level}`);
+      document.getElementById('diseaseDesc').textContent = descParts.join(' · ') || 'কোনো বিবরণ পাওয়া যায়নি।';
+
+      const symUl = document.getElementById('diseaseSymptoms');
+      symUl.innerHTML = '';
+      const symItems = [];
+      if (d.symptoms) symItems.push(d.symptoms);
+      if (d.infection_level) symItems.push(`আক্রান্ত এলাকা: ${d.infection_level}`);
+      if (d.warning) symItems.push(d.warning);
+      symItems.forEach(t => { const li = document.createElement('li'); li.textContent = t; symUl.appendChild(li); });
+
+      const nutUl = document.getElementById('nutrientsList');
+      nutUl.innerHTML = '';
+      (data.required_nutrients || []).forEach(n => {
+        const li = document.createElement('li');
+        const el = document.createElement('strong');
+        el.textContent = n.element || '';
+        li.appendChild(el);
+        li.appendChild(document.createTextNode(' — ' + (n.benefit_bn || n.benefit_en || '')));
+        nutUl.appendChild(li);
+      });
+      document.getElementById('nutrientsDesc').textContent = 'গাছটিকে সুস্থ রাখতে এই পুষ্টিগুলো জরুরি ভিত্তিতে প্রয়োগ করুন।';
+
+      const treatUl = document.getElementById('treatmentSteps');
+      treatUl.innerHTML = '';
+      ((data.treatment_plan && data.treatment_plan.steps) || []).forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step.instruction_bn || step.instruction_en || '';
+        treatUl.appendChild(li);
+      });
+      document.getElementById('treatmentDesc').textContent = 'ধাপে ধাপে এই নির্দেশনা অনুসরণ করুন — প্রাকৃতিক ও রাসায়নিক দুই ধরনের সমাধান।';
+
+      const lm = data.land_management || {};
+      const landUl = document.getElementById('landTips');
+      landUl.innerHTML = '';
+      const tips = [];
+      if (lm.soil_ph || lm.soil_ph_instruction_bn) {
+        tips.push(`মাটির pH ${lm.soil_ph || ''} — ${lm.soil_ph_instruction_bn || ''}`.trim());
+      }
+      if (lm.crop_rotation_bn) tips.push(lm.crop_rotation_bn);
+      if (lm.organic_inputs_bn) tips.push(lm.organic_inputs_bn);
+      if (lm.drainage_bn) tips.push(lm.drainage_bn);
+      tips.forEach(t => { const li = document.createElement('li'); li.textContent = t; landUl.appendChild(li); });
+      CB.renderFusion(data);
+    } catch (err) {
+      console.error('Render error:', err);
+      showToast('error', 'প্রদর্শনে সমস্যা', 'ফলাফল প্রদর্শনে ত্রুটি হয়েছে।');
+    }
+  }
+
+  // Scanner animation + real API call
+  let scanning = false;
+  scanBtn.addEventListener('click', () => {
+    if (scanning) return;
+    startScan();
+  });
+
+  async function startScan() {
+    if (!currentImageData) {
+      showToast('error', 'ছবি নেই', 'প্রথমে একটি ছবি আপলোড বা ক্যামেরা দিয়ে তুলুন।');
+      return;
+    }
+
+    scanning = true;
+    scanBtn.disabled = true;
+    scanBtnText.textContent = 'স্ক্যান চলছে...';
+    scannerFrame.classList.add('scanning');
+    scannerFrame.querySelectorAll('.detect-dot').forEach(d => d.remove());
+    scanText.textContent = 'Analyzing crop';
+    scanPercent.textContent = '0%';
+
+    // Fire API call immediately in parallel
+    const apiPromise = callDiseaseAPI(currentImageData)
+      .then(data => ({ ok: true, data }))
+      .catch(err => ({ ok: false, error: err.message || 'অজানা ত্রুটি' }));
+
+    // Visual scan animation to 90%
+    let progress = 0;
+    await new Promise(resolve => {
+      const iv = setInterval(() => {
+        progress += Math.random() * 5 + 2.5;
+        if (progress >= 90) {
+          progress = 90;
+          scanPercent.textContent = '90%';
+          clearInterval(iv);
+          resolve();
+          return;
+        }
+        scanPercent.textContent = Math.floor(progress) + '%';
+        if (progress > 30 && Math.random() > 0.55) spawnDetectionDot();
+      }, 140);
+    });
+
+    // Wait for API to finish if still pending
+    scanText.textContent = 'Processing results';
+    const apiResult = await apiPromise;
+
+    // Fast-forward visual to 100%
+    await new Promise(resolve => {
+      const ff = setInterval(() => {
+        progress += 5;
+        if (progress >= 100) {
+          progress = 100;
+          scanPercent.textContent = '100%';
+          clearInterval(ff);
+          resolve();
+        } else {
+          scanPercent.textContent = Math.floor(progress) + '%';
+        }
+      }, 40);
+    });
+
+    scanText.textContent = apiResult.ok ? 'Detection complete' : 'Detection failed';
+
+    setTimeout(() => {
+      scannerFrame.classList.remove('scanning');
+      scanBtn.disabled = false;
+      scanBtnText.textContent = 'আবার স্ক্যান করুন';
+      scanning = false;
+
+      if (apiResult.ok) {
+        renderDiseaseResults(apiResult.data);
+        showToast('success', 'বিশ্লেষণ সম্পন্ন', 'নিচে স্ক্রল করে বিস্তারিত ফলাফল দেখুন।');
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        if (apiResult.data.community_report && apiResult.data.community_report.shared) { showToast('info', 'রিপোর্ট শেয়ার হয়েছে', 'বেনামি রিপোর্টটি এলাকার সতর্কতা মানচিত্রে যোগ হয়েছে। ধন্যবাদ!'); CB.loadOutbreak(); }
+      } else {
+        showToast('error', 'বিশ্লেষণ ব্যর্থ', apiResult.error, 7000);
+      }
+    }, 700);
+  }
+
+  function spawnDetectionDot() {
+    const dot = document.createElement('div');
+    dot.className = 'detect-dot';
+    dot.style.left = (20 + Math.random() * 60) + '%';
+    dot.style.top = (20 + Math.random() * 60) + '%';
+    scannerFrame.appendChild(dot);
+  }
+
+  resetBtn.addEventListener('click', () => {
+    scannerView.classList.remove('show');
+    scannerFrame.classList.remove('scanning');
+    dropzone.style.display = 'flex';
+    fileInput.value = '';
+    currentImageData = null;
+    scanBtn.disabled = false;
+    scanBtnText.textContent = 'স্ক্যান শুরু করুন';
+    scanning = false;
+    scannerFrame.querySelectorAll('.detect-dot').forEach(d => d.remove());
+  });
+
+  // Live Camera
+  const camModal = document.getElementById('camModal');
+  const camVideo = document.getElementById('camVideo');
+  const camFlash = document.getElementById('camFlash');
+  const camError = document.getElementById('camError');
+  const camErrorText = document.getElementById('camErrorText');
+  const liveCamBtn = document.getElementById('liveCamBtn');
+  const camCloseBtn = document.getElementById('camCloseBtn');
+  const camSwitchBtn = document.getElementById('camSwitchBtn');
+  const camCaptureBtn = document.getElementById('camCaptureBtn');
+
+  let camStream = null;
+  let currentFacing = 'environment';
+
+  liveCamBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openCamera();
+  });
+  camCloseBtn.addEventListener('click', closeCamera);
+  camSwitchBtn.addEventListener('click', switchCamera);
+  camCaptureBtn.addEventListener('click', capturePhoto);
+
+  camModal.addEventListener('click', (e) => {
+    if (e.target === camModal) closeCamera();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && camModal.classList.contains('open')) closeCamera();
+  });
+
+  async function openCamera() {
+    camModal.classList.add('open');
+    camError.classList.remove('show');
+    document.body.style.overflow = 'hidden';
+    await startStream(currentFacing);
+  }
+
+  async function startStream(facing) {
+    try {
+      if (camStream) {
+        camStream.getTracks().forEach(t => t.stop());
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('not_supported');
+      }
+      camStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: facing },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        },
+        audio: false
+      });
+      camVideo.srcObject = camStream;
+      camVideo.classList.toggle('mirror', facing === 'user');
+      camError.classList.remove('show');
+    } catch (err) {
+      console.error('Camera error:', err);
+      let msg = 'অনুগ্রহ করে ব্রাউজার সেটিংস থেকে ক্যামেরার অনুমতি দিন এবং আবার চেষ্টা করুন।';
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        msg = 'ক্যামেরার অনুমতি দেওয়া হয়নি। ব্রাউজার সেটিংস থেকে অনুমতি দিন।';
+      } else if (err.name === 'NotFoundError' || err.message === 'not_supported') {
+        msg = 'এই ডিভাইসে কোনো ক্যামেরা পাওয়া যায়নি।';
+      } else if (err.name === 'NotReadableError') {
+        msg = 'ক্যামেরাটি অন্য অ্যাপ ব্যবহার করছে। প্রথমে সেটি বন্ধ করুন।';
+      }
+      camErrorText.textContent = msg;
+      camError.classList.add('show');
+    }
+  }
+
+  async function switchCamera() {
+    currentFacing = currentFacing === 'environment' ? 'user' : 'environment';
+    await startStream(currentFacing);
+  }
+
+  function closeCamera() {
+    if (camStream) {
+      camStream.getTracks().forEach(t => t.stop());
+      camStream = null;
+    }
+    camVideo.srcObject = null;
+    camModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function capturePhoto() {
+    if (!camStream) return;
+    camFlash.classList.add('fire');
+    setTimeout(() => camFlash.classList.remove('fire'), 400);
+
+    const canvas = document.createElement('canvas');
+    const vw = camVideo.videoWidth;
+    const vh = camVideo.videoHeight;
+    const sc = Math.min(1, 1280 / Math.max(vw, vh));
+    canvas.width = Math.round(vw * sc);
+    canvas.height = Math.round(vh * sc);
+    const ctx = canvas.getContext('2d');
+    if (currentFacing === 'user') {
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(camVideo, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+    currentImageData = dataUrl;
+    previewImg.src = dataUrl;
+    dropzone.style.display = 'none';
+    scannerView.classList.add('show');
+    scanText.textContent = 'Ready to scan';
+    scanPercent.textContent = '—';
+    scanBtnText.textContent = 'স্ক্যান শুরু করুন';
+
+    setTimeout(() => {
+      closeCamera();
+      setTimeout(() => startScan(), 400);
+    }, 500);
+  }
+
+  // ============ WEATHER v2 — real Open-Meteo data + transparent rule-based risks ============
+  const divCaps = document.querySelectorAll('.div-cap');
+  const weatherCard = document.getElementById('weatherCard');
+  const disasterList = document.getElementById('disasterList');
+
+  const bnDivisionNames = {
+    Dhaka: 'ঢাকা', Chattogram: 'চট্টগ্রাম', Rajshahi: 'রাজশাহী',
+    Khulna: 'খুলনা', Barishal: 'বরিশাল', Sylhet: 'সিলেট',
+    Rangpur: 'রংপুর', Mymensingh: 'ময়মনসিংহ'
+  };
+  const DIVISION_COORDS = {
+    Dhaka:[23.8103,90.4125], Chattogram:[22.3569,91.7832], Rajshahi:[24.3745,88.6042], Khulna:[22.8456,89.5403],
+    Barishal:[22.7010,90.3535], Sylhet:[24.8949,91.8687], Rangpur:[25.7439,89.2752], Mymensingh:[24.7471,90.4203]
+  };
+
+  const disasterIcons = {
+    thunderstorm: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+    heavy_rain: '<path d="M2 12h20M5 12a7 7 0 1 1 14 0"/><path d="M12 5v14"/>',
+    heatwave: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>',
+    cold_fog: '<path d="M2 8h14M2 12h20M6 16h16"/>',
+    disease_weather: '<path d="M17 14h.01M7 7h.01M12 10h.01M6 17.5A5.5 5.5 0 0 1 11.5 12h.5a6 6 0 0 1 6 6v.5"/>'
+  };
+  const LEVEL_BN = { HIGH: 'উচ্চ', MEDIUM: 'মাঝারি', LOW: 'কম' };
+
+  const WEATHER_FIELDS = ['wTemp', 'wCondition', 'wSub', 'wHumidity', 'wWind', 'wUV', 'wRain', 'wDate'];
+
+  divCaps.forEach(cap => {
+    cap.addEventListener('click', () => {
+      divCaps.forEach(c => c.classList.remove('active'));
+      cap.classList.add('active');
+      loadWeather(cap.dataset.location, cap.textContent.trim());
+      cap.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    });
+  });
+
+  async function loadWeather(location, bnName, coords) {
+    weatherCard.classList.add('is-loading');
+    document.getElementById('wLocation').textContent = `${bnName || bnDivisionNames[location] || location}, বাংলাদেশ`;
+    document.getElementById('wLocationEn').textContent = coords ? `${coords.lat.toFixed(3)}, ${coords.lon.toFixed(3)} · BD` : `${location} · BD`;
+    WEATHER_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('shimmer-text'); el.textContent = '···········'; }
+    });
+    disasterList.innerHTML = `
+      <div class="disaster-item">
+        <div class="disaster-info">
+          <div class="disaster-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div>
+          <div><div class="name shimmer-text">লোড হচ্ছে...........</div><div class="time shimmer-text">.........</div></div>
+        </div>
+        <div class="risk risk-low shimmer-text">····</div>
+      </div>`;
+    const loc = coords
+      ? { lat: coords.lat, lon: coords.lon, name_bn: bnName || coords.name_bn || 'আপনার অবস্থান', name: coords.name || '', source: coords.source || 'gps' }
+      : { lat: DIVISION_COORDS[location][0], lon: DIVISION_COORDS[location][1], name_bn: bnName || bnDivisionNames[location], name: location, key: location, source: 'division' };
+    CB.setLoc(loc);
+    if (coords) divCaps.forEach(c => c.classList.remove('active'));
+    const url = coords
+      ? `${WEATHER_ENDPOINT}?lat=${coords.lat}&lon=${coords.lon}&name=${encodeURIComponent(coords.name || '')}`
+      : `${WEATHER_ENDPOINT}?location=${encodeURIComponent(location)}`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      CB.saveLast('weather', data);
+      renderWeather(data);
+    } catch (err) {
+      console.error('Weather error:', err);
+      const last = CB.getLast('weather');
+      if (last) {
+        renderWeather(last.data, last.t);
+        showToast('info', 'অফলাইন/সংযোগ সমস্যা', 'শেষ সংরক্ষিত আবহাওয়া দেখানো হচ্ছে।');
+      } else {
+        showToast('error', 'আবহাওয়া লোড ব্যর্থ', err.message || 'সার্ভারের সাথে সংযোগ সম্ভব হয়নি।');
+        WEATHER_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('shimmer-text'); el.textContent = '—'; } });
+        disasterList.innerHTML = '<div class="disaster-item"><div class="disaster-info"><div>তথ্য লোড করা যায়নি। আবার চেষ্টা করুন।</div></div></div>';
+      }
+    } finally {
+      weatherCard.classList.remove('is-loading');
+    }
+  }
+
+  function renderWeather(data, staleSince) {
+    WEATHER_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('shimmer-text'); });
+    const cw = data.current_weather || {};
+    if (data.location) document.getElementById('wLocation').textContent = data.location;
+    const t = cw.observed_at ? new Date(cw.observed_at + ':00+06:00') : null;
+    document.getElementById('wDate').textContent = t ? t.toLocaleString('bn-BD', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : (data.date || '—');
+    document.getElementById('wTemp').textContent = toBn(cw.temperature ?? '—');
+    document.getElementById('wCondition').textContent = cw.condition || '—';
+    const feels = cw.feels_like != null ? `${toBn(cw.feels_like)}°C` : '—';
+    document.getElementById('wSub').textContent = `অনুভূত হচ্ছে ${feels} · বাতাস ${cw.wind_direction || '—'} থেকে`;
+    document.getElementById('wHumidity').textContent = cw.humidity != null ? `${toBn(cw.humidity)}%` : '—';
+    document.getElementById('wWind').textContent = cw.wind_speed != null ? `${toBn(cw.wind_speed)} km/h` : '—';
+    document.getElementById('wUV').textContent = cw.uv_index != null ? toBn(cw.uv_index) : '—';
+    document.getElementById('wRain').textContent = cw.rain_probability != null ? `${toBn(cw.rain_probability)}%` : '—';
+    renderDisasters(data.risk_outlook || []);
+    renderWxExtras(data, staleSince);
+    CB.updateLocChip();
+  }
+
+  function renderDisasters(risks) {
+    disasterList.innerHTML = '';
+    if (!risks.length) {
+      disasterList.innerHTML = '<div class="disaster-item"><div class="disaster-info"><div><div class="name">কোনো ঝুঁকি নেই</div><div class="time">বর্তমানে পরিবেশ স্বাভাবিক</div></div></div></div>';
+      return;
+    }
+    risks.forEach(r => {
+      const level = (r.risk_level || 'LOW').toUpperCase();
+      const riskClass = { HIGH: 'risk-high', MEDIUM: 'risk-mid', LOW: 'risk-low' }[level] || 'risk-low';
+      const item = document.createElement('div');
+      item.className = 'disaster-item';
+      const det = document.createElement('details');
+      det.style.flex = '1'; det.style.minWidth = '0';
+      const sum = document.createElement('summary');
+      const info = document.createElement('div');
+      info.className = 'disaster-info';
+      const iconBox = document.createElement('div');
+      iconBox.className = 'disaster-icon';
+      iconBox.innerHTML = `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="2">${disasterIcons[r.id] || '<circle cx="12" cy="12" r="10"/>'}</svg>`;
+      const textBox = document.createElement('div');
+      const name = document.createElement('div'); name.className = 'name'; name.textContent = r.risk_type || '—';
+      const time = document.createElement('div'); time.className = 'time'; time.textContent = r.details || r.english_details || '—';
+      textBox.append(name, time); info.append(iconBox, textBox); sum.appendChild(info); det.appendChild(sum);
+      const rule = document.createElement('div'); rule.className = 'rule';
+      rule.textContent = 'নিয়ম: ' + (r.rule || '—');
+      const ev = document.createElement('div'); ev.className = 'risk-evidence';
+      ev.textContent = 'প্রমাণ: ' + Object.entries(r.evidence || {}).map(([k, v]) => `${k}=${v}`).join(' · ');
+      det.append(rule, ev);
+      const riskBadge = document.createElement('div');
+      riskBadge.className = `risk ${riskClass}`;
+      riskBadge.textContent = LEVEL_BN[level] || level;
+      item.append(det, riskBadge);
+      disasterList.appendChild(item);
+    });
+  }
+
+  function renderWxExtras(data, staleSince) {
+    // 7-day strip
+    const days = document.getElementById('wDays'); days.innerHTML = '';
+    (data.daily || []).forEach(d => {
+      const el = document.createElement('div'); el.className = 'day';
+      const dt = new Date(d.date + 'T00:00:00+06:00');
+      el.innerHTML = `<div class="muted" style="font-size:11px"></div><div class="t"></div><div class="r"></div>`;
+      el.children[0].textContent = dt.toLocaleDateString('bn-BD', { weekday: 'short', day: 'numeric' });
+      el.children[1].textContent = `${toBn(Math.round(d.tmax))}° / ${toBn(Math.round(d.tmin))}°`;
+      el.children[2].textContent = `☂ ${toBn(Math.round(d.rain_mm))} মিমি`;
+      el.title = d.condition || '';
+      days.appendChild(el);
+    });
+    // source + timestamp
+    const src = data.data_source || {};
+    const fetched = src.fetched_at ? new Date(src.fetched_at).toLocaleString('bn-BD') : '—';
+    document.getElementById('wSource').innerHTML = '';
+    const s1 = document.createElement('span');
+    s1.textContent = `উৎস: ${src.provider || 'Open-Meteo'} · আনা হয়েছে ${fetched} (ঢাকা সময়)` + (staleSince ? ` · ⚠ অফলাইন কপি` : '') + ' · ';
+    const a = document.createElement('a'); a.href = src.url || 'https://open-meteo.com/'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = src.license || 'CC BY 4.0';
+    document.getElementById('wSource').append(s1, a);
+    // advisory
+    const adv = data.advisory || {}; const ul = document.getElementById('wAdvice'); ul.innerHTML = '';
+    (adv.advisory_bn || [data.note || '—']).forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+    const g = adv.grounding;
+    document.getElementById('wAdviceMeta').textContent = `${adv.generated_by || ''}` + (g ? ` · সংখ্যা যাচাই: ${g.grounded ? '✓ সব সংখ্যা আসল তথ্যে আছে' : '⚠ যাচাইহীন: ' + g.unverified.join(', ')}` : '');
+    // spray windows
+    const sp = document.getElementById('wSpray'); sp.innerHTML = '';
+    if (!(data.spray_windows || []).length) {
+      sp.innerHTML = '<p class="muted">আগামী ৪৮ ঘণ্টায় নিরাপদ স্প্রে-সময় নেই (বাতাস/বৃষ্টি/গরম)। স্প্রে পিছিয়ে দিন।</p>';
+    } else {
+      data.spray_windows.forEach(w => {
+        const st = new Date(w.start + ':00+06:00'), en = new Date(w.end + ':00+06:00'); en.setHours(en.getHours() + 1);
+        const row = document.createElement('div'); row.className = 'spray-slot';
+        const l = document.createElement('span'); l.textContent = `${st.toLocaleDateString('bn-BD', { weekday: 'short' })} ${st.toLocaleTimeString('bn-BD', { hour: 'numeric', minute: '2-digit' })} – ${en.toLocaleTimeString('bn-BD', { hour: 'numeric', minute: '2-digit' })}`;
+        const r = document.createElement('span'); r.className = 'pill'; r.textContent = `${toBn(w.hours)} ঘণ্টা`;
+        row.append(l, r); sp.appendChild(row);
+      });
+    }
+    document.getElementById('wSprayRule').textContent = data.spray_rule || '';
+    // irrigation
+    const ir = data.irrigation || {};
+    document.getElementById('wIrr').innerHTML = `<div class="grid-2"><div><div class="muted">বাষ্পীভবন (ET₀)</div><div class="ndvi-big" style="font-size:30px">${toBn(ir.et0_7day_mm ?? '—')}<span style="font-size:14px"> মিমি</span></div></div><div><div class="muted">পূর্বাভাসিত বৃষ্টি</div><div class="ndvi-big" style="font-size:30px">${toBn(ir.rain_7day_mm ?? '—')}<span style="font-size:14px"> মিমি</span></div></div></div>
+      <p style="margin-top:10px;font-size:14px">${ir.deficit_mm > 0 ? `আগামী ৭ দিনে প্রায় <b>${toBn(ir.deficit_mm)} মিমি</b> পানির ঘাটতি — বোরো ধানে এডব্লিউডি পাইপ দেখে সেচ দিন।` : 'বৃষ্টিই পানির চাহিদা মেটাবে — এখন বাড়তি সেচ লাগবে না, নালা খোলা রাখুন।'}</p>
+      <p class="muted" style="font-size:11.5px;margin-top:6px">FAO-56 রেফারেন্স ET₀ (ঘাস)। ফসলের আসল চাহিদা = ET₀ × ফসল সহগ (Kc)।</p>`;
+  }
+
+  // Place search (Open-Meteo geocoding, Bangladesh only) + browser GPS
+  const placeSearch = document.getElementById('placeSearch');
+  let lastPlaces = [];
+  async function searchPlace(q) {
+    const r = await fetch(`${API_BASE}/geocode.php?q=${encodeURIComponent(q)}`);
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'search failed');
+    lastPlaces = d.results || [];
+    const dl = document.getElementById('placeList'); dl.innerHTML = '';
+    lastPlaces.forEach(p => { const o = document.createElement('option'); o.value = `${p.name}${p.district ? ', ' + p.district : ''}`; dl.appendChild(o); });
+    return lastPlaces;
+  }
+  document.getElementById('placeBtn').addEventListener('click', async () => {
+    const q = placeSearch.value.trim(); if (q.length < 2) return;
+    try {
+      const want = q.split(',')[0].trim().toLowerCase();
+      const res = lastPlaces.find(p => p.name.toLowerCase() === want) ? lastPlaces : await searchPlace(q.split(',')[0]);
+      const p = res.find(p => p.name.toLowerCase() === want) || res[0];
+      if (!p) { showToast('info', 'পাওয়া যায়নি', 'বাংলাদেশে এই নামে কোনো স্থান পাওয়া যায়নি। ইংরেজি বানানে চেষ্টা করুন।'); return; }
+      loadWeather(null, `${p.name}${p.district ? ', ' + p.district.replace(' District', '') : ''}`, { lat: p.lat, lon: p.lon, name: p.name, source: 'search' });
+    } catch (e) { showToast('error', 'খোঁজা ব্যর্থ', e.message); }
+  });
+  placeSearch.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('placeBtn').click(); } });
+  let placeTimer = null;
+  placeSearch.addEventListener('input', () => { clearTimeout(placeTimer); const q = placeSearch.value.trim(); if (q.length >= 3 && !q.includes(',')) placeTimer = setTimeout(() => searchPlace(q).catch(() => {}), 400); });
+  document.getElementById('gpsBtn').addEventListener('click', () => {
+    CB.locate().then(c => loadWeather(null, 'আমার অবস্থান', { lat: c.lat, lon: c.lon, name: 'My location', source: 'gps' }))
+      .catch(e => showToast('error', 'অবস্থান পাওয়া যায়নি', e.message));
+  });
+
+  // ============ INITIAL PAGE LOAD ============
+  document.addEventListener('DOMContentLoaded', () => {
+    const saved = CB.getLoc();
+    if (saved && saved.source !== 'division') loadWeather(null, saved.name_bn, saved);
+    else loadWeather((saved && saved.key) || 'Dhaka', (saved && saved.name_bn) || 'ঢাকা');
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="assets/chasha-v2.js"></script>
+<script src="assets/sat-enhance.js"></script>
+</body>
+</html>

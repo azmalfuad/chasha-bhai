@@ -1,0 +1,39 @@
+# চাষা ভাই — root .htaccess (Apache / cPanel shared hosting)
+Options -Indexes
+DirectoryIndex index.html
+
+# Block internal folders and files from the web
+RedirectMatch 403 ^.*/(data|services|eval|mcp)(/.*)?$
+# Old debug script must never be reachable
+RedirectMatch 404 ^.*/test\.php$
+RedirectMatch 403 ^.*/(router\.php|README\.md|SUBMISSION\.md|\.git.*|\.env.*)$
+<FilesMatch "\.(md|py|jsonl|log|sh|lock|env|ini|bak)$">
+  Require all denied
+</FilesMatch>
+
+# Force HTTPS (camera + geolocation + service worker need a secure context)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(self), microphone=(self), geolocation=(self)"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  <FilesMatch "sw\.js$">
+    Header set Cache-Control "no-cache"
+    Header set Service-Worker-Allowed "/"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_php.c>
+  php_value upload_max_filesize 12M
+  php_value post_max_size 14M
+</IfModule>
+
+AddType application/manifest+json .webmanifest

@@ -1,0 +1,16 @@
+---
+description: Stack, file layout, and change discipline for চাষা ভাই v2
+alwaysApply: true
+---
+
+# Architecture
+
+PHP 8 (no framework) and vanilla JS for the PWA and API. Python FastAPI + rasterio for Sentinel-2 COG reads. Official MCP Python SDK for `mcp/server.py` only.
+
+Do not add React, Vue, Laravel, LangChain, a vector database, Redis, or a graph database unless the user explicitly asks and the PRD is updated.
+
+Secrets stay in environment variables or a config file outside the web root. Never commit `api/config.local.php` or API keys. Never put vendor names (xAI, Grok, model ids) in farmer-facing UI.
+
+Local run: PHP `127.0.0.1:8080` with `router.php`, satellite service `127.0.0.1:8001`. After changing JS or the app shell, bump the service-worker version in `sw.js`.
+
+Read `AGENTS.md` and `docs/PRD.md` before large changes.

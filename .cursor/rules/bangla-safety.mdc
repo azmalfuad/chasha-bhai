@@ -1,0 +1,22 @@
+---
+description: Farmer-facing Bangla wording and safety guardrails
+globs: index.html,assets/**,api/**/*.php
+alwaysApply: false
+---
+
+# Wording and safety
+
+Farmer-facing text is simple Bangladeshi Bangla.
+
+- Use সবুজতা স্কোর (0–100), not the jargon “NDVI”, in the UI. NDVI may appear in API field names and judge-facing docs.
+- Use কৃষি পরামর্শ for the advice chat, not “copilot”.
+- Do not display the AI vendor or model name on any public page.
+
+Safety (do not loosen these in prompts or server filters):
+
+- IPM first; no banned persistent organic pollutants; no exact chemical doses.
+- No invented market prices.
+- Weather numbers must exist in rule-computed facts.
+- Citations must be server-validated.
+- Photos are not stored. Outbreak cells need ≥ 3 reports before they are shown.
+- Escalate low-confidence, viral, or high-infection cases to 16123.

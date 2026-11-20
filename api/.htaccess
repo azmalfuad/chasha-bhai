@@ -1,0 +1,16 @@
+# চাষা ভাই — api/.htaccess
+Options -Indexes
+# Never serve config / library / local secrets
+<FilesMatch "^(config\.local\.php|config\.sample\.php|bootstrap\.php)$">
+  Require all denied
+</FilesMatch>
+RedirectMatch 403 ^.*/api/lib/.*$
+# Old debug script must not exist in production
+RedirectMatch 404 ^.*/api/test\.php$
+<IfModule mod_php.c>
+  php_value upload_max_filesize 12M
+  php_value post_max_size 14M
+  php_value memory_limit 128M
+  php_value max_execution_time 120
+  php_flag display_errors off
+</IfModule>

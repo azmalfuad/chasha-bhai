@@ -1,0 +1,6 @@
+@echo off
+title Chasha Bhai - Install requirements
+cd /d "%~dp0"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0install_requirements.ps1"
+echo.
+pause

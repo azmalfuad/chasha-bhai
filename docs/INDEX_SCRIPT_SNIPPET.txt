@@ -1,0 +1,8 @@
+Add this exact line to index.html, immediately after
+  <script src="assets/chasha-v2.js"></script>
+and immediately before </body>:
+
+<script src="assets/sat-enhance.js"></script>
+
+Do not replace the rest of index.html. The PC copy has later Bangla wording
+that must be kept. Then hard-refresh the site (Ctrl+F5).

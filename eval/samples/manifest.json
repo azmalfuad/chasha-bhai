@@ -1,0 +1,150 @@
+[
+ {
+  "id": "rice_blast",
+  "file": "rice_blast.jpg",
+  "commons_title": "File:Rice blast Magnaporthe grisea.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Rice_blast_Magnaporthe_grisea.jpg",
+  "crop": "rice",
+  "expect_any": [
+   "blast"
+  ],
+  "license": "Public domain",
+  "author": ""
+ },
+ {
+  "id": "xanthomonas_multi_panel",
+  "file": "xanthomonas_multi_panel.jpg",
+  "commons_title": "File:Xanthomonas-disease.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Xanthomonas-disease.jpg",
+  "crop": "",
+  "expect_any": [
+   "bacterial",
+   "xanthomonas",
+   "black rot",
+   "blight",
+   "unknown"
+  ],
+  "license": "CC BY 4.0",
+  "author": "An SQ, Potnis N, Dow M, Vorhölter FJ, He YQ, Becker A, Teper D, Li Y, Wang N, Bleris L, Tang JL.",
+  "note": "Multi-panel collage of several Xanthomonas diseases on different hosts (hard case)"
+ },
+ {
+  "id": "potato_late_blight",
+  "file": "potato_late_blight.jpg",
+  "commons_title": "File:Phytophthora infestans on potato leaf.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Phytophthora_infestans_on_potato_leaf.jpg",
+  "crop": "potato",
+  "expect_any": [
+   "late blight",
+   "phytophthora"
+  ],
+  "license": "CC BY 3.0 us",
+  "author": "Mary Ann Hansen, Virginia Polytechnic Institute and State University, United States"
+ },
+ {
+  "id": "tomato_late_blight",
+  "file": "tomato_late_blight.jpg",
+  "commons_title": "File:Late blight on tomato leaf (7871756748).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Late_blight_on_tomato_leaf_(7871756748).jpg",
+  "crop": "tomato",
+  "expect_any": [
+   "late blight",
+   "phytophthora"
+  ],
+  "license": "CC BY 2.0",
+  "author": "Dwight Sipler from Stow, MA, USA"
+ },
+ {
+  "id": "tomato_early_blight",
+  "file": "tomato_early_blight.jpg",
+  "commons_title": "File:Early blight on tomato leaves (7871930010).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Early_blight_on_tomato_leaves_(7871930010).jpg",
+  "crop": "tomato",
+  "expect_any": [
+   "early blight",
+   "alternaria"
+  ],
+  "license": "CC BY 2.0",
+  "author": "Dwight Sipler from Stow, MA, USA"
+ },
+ {
+  "id": "citrus_canker",
+  "file": "citrus_canker.jpg",
+  "commons_title": "File:Citrus canker on foliage.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Citrus_canker_on_foliage.jpg",
+  "crop": "citrus",
+  "expect_any": [
+   "canker"
+  ],
+  "license": "Public domain",
+  "author": ""
+ },
+ {
+  "id": "maize_fall_armyworm",
+  "file": "maize_fall_armyworm.jpg",
+  "commons_title": "File:Zea mays damaged by Spodoptera frugiperda (200218-0814).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Zea_mays_damaged_by_Spodoptera_frugiperda_(200218-0814).jpg",
+  "crop": "maize",
+  "expect_any": [
+   "armyworm",
+   "spodoptera",
+   "caterpillar",
+   "larva",
+   "borer",
+   "pest"
+  ],
+  "license": "CC BY-SA 4.0",
+  "author": "Wee Hong"
+ },
+ {
+  "id": "powdery_mildew",
+  "file": "powdery_mildew.jpg",
+  "commons_title": "File:Powdery mildew 9.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Powdery_mildew_9.jpg",
+  "crop": "",
+  "expect_any": [
+   "powdery mildew"
+  ],
+  "license": "CC BY-SA 4.0",
+  "author": "Dmitry Brant"
+ },
+ {
+  "id": "cucumber_mosaic_virus",
+  "file": "cucumber_mosaic_virus.jpg",
+  "commons_title": "File:Cucumber mosaic virus symptoms.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Cucumber_mosaic_virus_symptoms.jpg",
+  "crop": "",
+  "expect_any": [
+   "mosaic",
+   "virus"
+  ],
+  "license": "CC BY 3.0 us",
+  "author": "William M. Brown Jr."
+ },
+ {
+  "id": "rice_healthy",
+  "file": "rice_healthy.jpg",
+  "commons_title": "File:Leafs of rice plant.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Leafs_of_rice_plant.jpg",
+  "crop": "rice",
+  "expect_any": [
+   "healthy"
+  ],
+  "license": "CC BY-SA 4.0",
+  "author": "Sivabalachandar03"
+ },
+ {
+  "id": "not_a_plant_food_plate",
+  "file": "not_a_plant_food_plate.jpg",
+  "commons_title": "File:Rice, beans and green vegetables.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Rice,_beans_and_green_vegetables.jpg",
+  "crop": "",
+  "expect_any": [
+   "unknown",
+   "not a plant",
+   "no plant"
+  ],
+  "license": "CC BY-SA 4.0",
+  "author": "BlessNathan"
+ }
+]

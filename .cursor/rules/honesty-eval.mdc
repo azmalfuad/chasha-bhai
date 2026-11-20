@@ -1,0 +1,15 @@
+---
+description: Honesty rules and how to run the eval harness
+globs: eval/**,docs/**,*.md,SUBMISSION.md
+alwaysApply: false
+---
+
+# Honesty and evaluation
+
+Do not invent users, pilots, partners, market sizes, or accuracy figures.
+
+The only published vision result is in `eval/EVAL.md` (11 openly licensed reference photos, 19 Nov 2026): top-1 6/11, expected label in top-1 or differential 11/11. Real field phone photos will likely score lower. Report misses; do not hide them.
+
+Reproduce with `python eval/run_eval.py --api http://127.0.0.1:8080/api`.
+
+Hackathon provenance fields may name xAI Grok models. Public marketing fields may not.
